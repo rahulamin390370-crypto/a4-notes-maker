@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A4 Notes Maker</title>
+
+  <!-- Google Handwriting Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Homemade+Apple&family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+  <!-- PDF & Canvas Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      padding: 14px;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* Top Wallet Header */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .wallet-badge {
+      background: #22c55e;
+      color: #052e16;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-image {
+      background: #0284c7;
+      color: white;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-pdf {
+      background: #16a34a;
+      color: white;
+      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-ad {
+      background: #f59e0b;
+      color: #451a03;
+      margin-bottom: 14px;
+    }
+
+    /* Recharge Plan Grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .plan-box {
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 6px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafafa;
+    }
+
+    .plan-box:active {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .plan-price {
+      font-size: 15px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+
+    .plan-pages {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Invisible A4 render area */
+    #hidden-render-container {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      visibility: hidden;
+    }
+
+    .a4-page {
+      width: 595px;
+      height: 842px;
+      background: #ffffff;
+      padding: 40px 30px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ruled-style {
+      background-image: repeating-linear-gradient(
+        white,
+        white 31px,
+        #cbd5e1 32px
+      );
+      line-height: 32px;
+    }
+
+    .unruled-style {
+      background-image: none;
+      line-height: 30px;
+    }
+
+    .page-text-content {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 18px;
+    }
+
+    .page-footer-tag {
+      position: absolute;
+      bottom: 12px;
+      right: 25px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .ink-blue { color: #1e3a8a; }
+    .ink-darkblue { color: #0f172a; }
+    .ink-black { color: #171717; }
+
+    /* Ad Simulation Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Wallet Bar -->
+  <div class="top-bar">
+    <div class="brand-title">A4 Notes Maker</div>
+    <div class="wallet-badge">Balance: <span id="balance-display">4</span> Pages</div>
+  </div>
+
+  <!-- Main Creation Card -->
+  <div class="card">
+    <label>Question / Answer Paste Karein:</label>
+    <textarea id="input-text" placeholder="Yahan apna answer paste karein..."></textarea>
+
+    <div class="grid-2">
+      <div>
+        <label>Kitne Pages Chahiye?</label>
+        <input type="number" id="manual-pages-count" value="1" min="1" max="50">
+      </div>
+      <div>
+        <label>Paper Style:</label>
+        <select id="paper-type">
+          <option value="ruled-style">Ruled (Lines wala)</option>
+          <option value="unruled-style">Unruled (Plain White)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label>Handwriting Font:</label>
+        <select id="font-select">
+          <option value="'Caveat', cursive">Caveat (Fast Writing)</option>
+          <option value="'Patrick Hand', cursive" selected>Patrick Hand (Neat)</option>
+          <option value="'Indie Flower', cursive">Indie Flower</option>
+          <option value="'Homemade Apple', cursive">Homemade Apple (Cursive)</option>
+        </select>
+      </div>
+      <div>
+        <label>Ink Color:</label>
+        <select id="ink-select">
+          <option value="ink-blue">Blue Gel Pen</option>
+          <option value="ink-darkblue">Dark Blue</option>
+          <option value="ink-black">Black Ball Pen</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Dual Action Buttons: Image vs PDF -->
+    <div class="btn-group">
+      <button class="btn btn-image" id="btn-image" onclick="processAndExport('image')">📸 Download Image (JPG)</button>
+      <button class="btn btn-pdf" id="btn-pdf" onclick="processAndExport('pdf')">📄 Download PDF</button>
+    </div>
+  </div>
+
+  <!-- Ad & Plans Card -->
+  <div class="card">
+    <h2>Pages Balance Badhayein</h2>
+    <button class="btn btn-ad" onclick="watchAdReward()">📺 Watch Ad (+2 Free Pages)</button>
+
+    <label>Recharge Plans (Instant Add):</label>
+    <div class="plans-grid">
+      <div class="plan-box" onclick="rechargePlan(1, 3)">
+        <div class="plan-price">₹1</div>
+        <div class="plan-pages">3 Pages</div>
+      </div>
+      <div class="plan-box" onclick="rechargePlan(9, 50)">
+        <div class="plan-price">₹9</div>
+        <div class="plan-pages">50 Pages</div>
+      </div>
+      <div class="plan-box" onclick="rechargePlan(19, 200)">
+        <div class="plan-price">₹19</div>
+        <div class="plan-pages">200 Pages</div>
+      </div>
+      <div class="plan-box" onclick="rechargePlan(49, 500)">
+        <div class="plan-price">₹49</div>
+        <div class="plan-pages">500 Pages</div>
+      </div>
+      <div class="plan-box" onclick="rechargePlan(99, 1500)">
+        <div class="plan-price">₹99</div>
+        <div class="plan-pages">1500 Pages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invisible Render Area -->
+  <div id="hidden-render-container"></div>
+
+  <!-- Ad Simulation Modal -->
+  <div class="modal" id="ad-modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 8px;">Ad Chal Raha Hai...</h3>
+      <p style="color: #64748b; font-size: 13px;">Reward ke liye thoda wait kijiye</p>
+      <div style="margin: 18px 0; font-weight: bold; font-size: 26px; color: #f59e0b;" id="ad-timer">3</div>
+    </div>
+  </div>
+
+  <script>
+    let pageBalance = parseInt(localStorage.getItem('assignment_user_balance')) || 4;
+    const balanceDisplay = document.getElementById('balance-display');
+    const hiddenContainer = document.getElementById('hidden-render-container');
+    const btnImage = document.getElementById('btn-image');
+    const btnPdf = document.getElementById('btn-pdf');
+
+    function updateBalanceUI() {
+      balanceDisplay.innerText = pageBalance;
+      localStorage.setItem('assignment_user_balance', pageBalance);
+    }
+    updateBalanceUI();
+
+    function watchAdReward() {
+      const modal = document.getElementById('ad-modal');
+      const timerEl = document.getElementById('ad-timer');
+      let countdown = 3;
+
+      modal.style.display = 'flex';
+      timerEl.innerText = countdown;
+
+      const timer = setInterval(() => {
+        countdown--;
+        timerEl.innerText = countdown;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          modal.style.display = 'none';
+          pageBalance += 2;
+          updateBalanceUI();
+          alert('Badhai ho! 2 Pages add ho gaye.');
+        }
+      }, 1000);
+    }
+
+    function rechargePlan(rupees, pages) {
+      if (confirm(`₹${rupees} me ${pages} Pages pack unlock karein?`)) {
+        pageBalance += pages;
+        updateBalanceUI();
+        alert(`Success! ₹${rupees} ka plan add ho gaya. +${pages} Pages mile.`);
+      }
+    }
+
+    async function processAndExport(formatType) {
+      const text = document.getElementById('input-text').value.trim();
+      const requestedPages = parseInt(document.getElementById('manual-pages-count').value) || 1;
+      const paperType = document.getElementById('paper-type').value;
+      const font = document.getElementById('font-select').value;
+      const ink = document.getElementById('ink-select').value;
+
+      if (!text) {
+        alert('Pehle text ya answer paste karein!');
+        return;
+      }
+
+      if (pageBalance < requestedPages) {
+        alert(`Aapke paas sirf ${pageBalance} pages ka balance hai. Kripya ad dekhein ya recharge karein!`);
+        return;
+      }
+
+      btnImage.disabled = true;
+      btnPdf.disabled = true;
+      if (formatType === 'image') btnImage.innerText = 'Creating JPG...';
+      else btnPdf.innerText = 'Creating PDF...';
+
+      pageBalance -= requestedPages;
+      updateBalanceUI();
+
+      hiddenContainer.innerHTML = '';
+
+      const totalChars = text.length;
+      const charsPerPage = Math.ceil(totalChars / requestedPages);
+
+      for (let i = 0; i < requestedPages; i++) {
+        const start = i * charsPerPage;
+        const end = start + charsPerPage;
+        const pageText = text.substring(start, end);
+
+        const pageEl = document.createElement('div');
+        pageEl.className = `a4-page ${paperType}`;
+
+        const contentEl = document.createElement('div');
+        contentEl.className = `page-text-content ${ink}`;
+        contentEl.style.fontFamily = font;
+        contentEl.innerText = pageText;
+
+        const footerTag = document.createElement('div');
+        footerTag.className = 'page-footer-tag';
+        footerTag.innerText = `Page ${i + 1} of ${requestedPages}`;
+
+        pageEl.appendChild(contentEl);
+        pageEl.appendChild(footerTag);
+        hiddenContainer.appendChild(pageEl);
+      }
+
+      const pageElements = hiddenContainer.querySelectorAll('.a4-page');
+
+      if (formatType === 'image') {
+        for (let i = 0; i < pageElements.length; i++) {
+          const canvas = await html2canvas(pageElements[i], { scale: 2, useCORS: true });
+          const link = document.createElement('a');
+          link.download = `A4_Notes_Page_${i + 1}.jpg`;
+          link.href = canvas.toDataURL('image/jpeg', 0.95);
+          link.click();
+        }
+      } else {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = 210;
+        const pdfHeight = 297;
+
+        for (let i = 0; i < pageElements.length; i++) {
+          const canvas = await html2canvas(pageElements[i], { scale: 2, useCORS: true });
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+          if (i > 0) pdf.addPage('a4', 'p');
+          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        }
+        pdf.save('A4_Notes_Maker.pdf');
+      }
+
+      hiddenContainer.innerHTML = '';
+      btnImage.disabled = false;
+      btnPdf.disabled = false;
+      btnImage.innerText = '📸 Download Image (JPG)';
+      btnPdf.innerText = '📄 Download PDF';
+    }
+  </script>
+
+</body>
+</html>
