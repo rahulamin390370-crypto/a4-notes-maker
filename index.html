@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A4 Notes Maker</title>
 
-  <!-- Google Handwriting Fonts -->
+  <!-- Google Fonts: Handwriting Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Homemade+Apple&family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Indie+Flower&family=Kalam:wght@400;700&family=Patrick+Hand&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PDF & Canvas Libraries -->
+  <!-- html2canvas & jsPDF Libraries for Clean Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -19,466 +19,649 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f1f5f9;
-      padding: 14px;
+      background-color: #f1f5f9;
       color: #1e293b;
-      min-height: 100vh;
+      padding-bottom: 50px;
     }
 
-    /* Top Wallet Header */
-    .top-bar {
+    /* Top Navbar */
+    .header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 14px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0f172a;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 12px;
-      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .brand-title {
-      font-size: 16px;
+      font-size: 1.1rem;
       font-weight: 700;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .wallet-badge {
-      background: #22c55e;
-      color: #052e16;
-      font-weight: 700;
-      padding: 6px 14px;
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-balance {
+      background: #10b981;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(16,185,129,0.3);
     }
 
+    .btn-auth-nav {
+      background: #3b82f6;
+      border: none;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Main Container */
+    .container {
+      padding: 14px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Card Wrapper */
     .card {
       background: #ffffff;
-      border-radius: 12px;
-      padding: 18px;
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    h2 {
-      font-size: 15px;
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
       margin-bottom: 12px;
       color: #0f172a;
     }
 
+    /* Textarea */
     label {
-      display: block;
-      font-size: 13px;
+      font-size: 0.8rem;
       font-weight: 600;
+      color: #64748b;
       margin-bottom: 6px;
-      color: #475569;
+      display: block;
     }
 
     textarea {
       width: 100%;
-      height: 140px;
-      padding: 12px;
+      height: 120px;
       border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.9rem;
       resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus {
+      border-color: #3b82f6;
     }
 
+    /* Controls Grid */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 10px;
+      gap: 10px;
+      margin-top: 12px;
     }
 
     select, input[type="number"] {
       width: 100%;
-      padding: 10px;
-      border: 1.5px solid #cbd5e1;
+      padding: 9px 10px;
       border-radius: 8px;
-      font-size: 14px;
+      border: 1.5px solid #cbd5e1;
       background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+      outline: none;
     }
 
-    .btn {
-      display: block;
+    /* Action Buttons */
+    .btn-primary {
       width: 100%;
+      background: #2563eb;
+      color: white;
       border: none;
       padding: 13px;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
       font-weight: 700;
+      margin-top: 14px;
       cursor: pointer;
-      text-align: center;
-      transition: opacity 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
     }
 
-    .btn:active {
-      opacity: 0.85;
+    /* A4 Realistic Preview Area */
+    #previewWrapper {
+      display: none;
+      margin-top: 16px;
     }
 
-    .btn-group {
+    .a4-page-frame {
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+    }
+
+    /* The Realistic A4 Sheet */
+    .a4-sheet {
+      width: 100%;
+      min-height: 480px;
+      background-color: #fffef8; /* Warm paper tone */
+      padding: 35px 22px 25px 35px;
+      position: relative;
+      border-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      overflow: hidden;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    /* Red Margin Line for Ruled Paper */
+    .a4-sheet.ruled::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 28px;
+      width: 1.5px;
+      background: #f87171;
+      z-index: 2;
+    }
+
+    /* Blue Notebook Lines */
+    .a4-sheet.ruled {
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 31px,
+        #cbd5e1 31px,
+        #cbd5e1 32px
+      );
+      line-height: 32px;
+    }
+
+    .a4-sheet.unruled {
+      line-height: 28px;
+    }
+
+    .paper-text {
+      position: relative;
+      z-index: 3;
+      font-size: 19px;
+    }
+
+    /* Download Buttons */
+    .download-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 14px;
     }
 
-    .btn-image {
+    .btn-download-jpg {
       background: #0284c7;
       color: white;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+      border: none;
+      padding: 11px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
     }
 
-    .btn-pdf {
-      background: #16a34a;
+    .btn-download-pdf {
+      background: #059669;
       color: white;
-      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+      border: none;
+      padding: 11px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
     }
 
-    .btn-ad {
-      background: #f59e0b;
-      color: #451a03;
-      margin-bottom: 14px;
+    /* Monetization & Watch Ad Box */
+    .ad-card {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 14px;
+      box-shadow: 0 4px 12px rgba(217,119,6,0.3);
     }
 
-    /* Recharge Plan Grid */
-    .plans-grid {
+    .btn-watch-ad {
+      background: white;
+      color: #b45309;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    /* Pricing Table */
+    .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .plan-box {
       border: 1.5px solid #e2e8f0;
-      padding: 12px 6px;
+      padding: 10px 6px;
       border-radius: 8px;
       text-align: center;
       cursor: pointer;
-      background: #fafafa;
+      transition: all 0.2s;
     }
-
-    .plan-box:active {
+    .plan-box:hover {
       border-color: #2563eb;
       background: #eff6ff;
     }
 
     .plan-price {
-      font-size: 15px;
-      font-weight: bold;
-      color: #1e3a8a;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
     }
 
     .plan-pages {
-      font-size: 12px;
+      font-size: 0.7rem;
       color: #64748b;
-      margin-top: 2px;
+      font-weight: 600;
     }
 
-    /* Invisible A4 render area */
-    #hidden-render-container {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      visibility: hidden;
-    }
-
-    .a4-page {
-      width: 595px;
-      height: 842px;
-      background: #ffffff;
-      padding: 40px 30px;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ruled-style {
-      background-image: repeating-linear-gradient(
-        white,
-        white 31px,
-        #cbd5e1 32px
-      );
-      line-height: 32px;
-    }
-
-    .unruled-style {
-      background-image: none;
-      line-height: 30px;
-    }
-
-    .page-text-content {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      font-size: 18px;
-    }
-
-    .page-footer-tag {
-      position: absolute;
-      bottom: 12px;
-      right: 25px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .ink-blue { color: #1e3a8a; }
-    .ink-darkblue { color: #0f172a; }
-    .ink-black { color: #171717; }
-
-    /* Ad Simulation Modal */
-    .modal {
-      display: none;
+    /* Auth Modal */
+    .modal-overlay {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15,23,42,0.6);
+      backdrop-filter: blur(4px);
+      display: none;
       justify-content: center;
-      z-index: 1000;
+      align-items: center;
+      z-index: 200;
       padding: 16px;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 380px;
+    .modal-box {
+      background: #ffffff;
       width: 100%;
+      max-width: 360px;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .modal-tabs {
+      display: flex;
+      margin-bottom: 16px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+
+    .modal-tab {
+      flex: 1;
       text-align: center;
+      padding: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .modal-tab.active {
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Wallet Bar -->
-  <div class="top-bar">
-    <div class="brand-title">A4 Notes Maker</div>
-    <div class="wallet-badge">Balance: <span id="balance-display">4</span> Pages</div>
-  </div>
-
-  <!-- Main Creation Card -->
-  <div class="card">
-    <label>Question / Answer Paste Karein:</label>
-    <textarea id="input-text" placeholder="Yahan apna answer paste karein..."></textarea>
-
-    <div class="grid-2">
-      <div>
-        <label>Kitne Pages Chahiye?</label>
-        <input type="number" id="manual-pages-count" value="1" min="1" max="50">
-      </div>
-      <div>
-        <label>Paper Style:</label>
-        <select id="paper-type">
-          <option value="ruled-style">Ruled (Lines wala)</option>
-          <option value="unruled-style">Unruled (Plain White)</option>
-        </select>
-      </div>
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="brand-title">
+      <span>📝</span> A4 Notes Maker
     </div>
-
-    <div class="grid-2">
-      <div>
-        <label>Handwriting Font:</label>
-        <select id="font-select">
-          <option value="'Caveat', cursive">Caveat (Fast Writing)</option>
-          <option value="'Patrick Hand', cursive" selected>Patrick Hand (Neat)</option>
-          <option value="'Indie Flower', cursive">Indie Flower</option>
-          <option value="'Homemade Apple', cursive">Homemade Apple (Cursive)</option>
-        </select>
-      </div>
-      <div>
-        <label>Ink Color:</label>
-        <select id="ink-select">
-          <option value="ink-blue">Blue Gel Pen</option>
-          <option value="ink-darkblue">Dark Blue</option>
-          <option value="ink-black">Black Ball Pen</option>
-        </select>
-      </div>
+    <div class="user-actions">
+      <span class="badge-balance" id="balanceDisplay">Balance: 4 Pages</span>
+      <button class="btn-auth-nav" id="authBtn" onclick="openAuthModal()">Login</button>
     </div>
+  </header>
 
-    <!-- Dual Action Buttons: Image vs PDF -->
-    <div class="btn-group">
-      <button class="btn btn-image" id="btn-image" onclick="processAndExport('image')">📸 Download Image (JPG)</button>
-      <button class="btn btn-pdf" id="btn-pdf" onclick="processAndExport('pdf')">📄 Download PDF</button>
-    </div>
-  </div>
+  <main class="container">
+    <!-- Input Card -->
+    <section class="card">
+      <label for="inputText">Assignment / Notes Text Paste Karein:</label>
+      <textarea id="inputText" placeholder="Apna text yahan copy-paste karein..."></textarea>
 
-  <!-- Ad & Plans Card -->
-  <div class="card">
-    <h2>Pages Balance Badhayein</h2>
-    <button class="btn btn-ad" onclick="watchAdReward()">📺 Watch Ad (+2 Free Pages)</button>
+      <div class="grid-2">
+        <div>
+          <label>Handwriting Font:</label>
+          <select id="fontSelect">
+            <option value="'Caveat', cursive">Caveat (Stylist)</option>
+            <option value="'Patrick Hand', cursive" selected>Patrick Hand (Neat & Clean)</option>
+            <option value="'Kalam', cursive">Kalam (Indian Style)</option>
+            <option value="'Indie Flower', cursive">Indie Flower (Casual)</option>
+          </select>
+        </div>
 
-    <label>Recharge Plans (Instant Add):</label>
-    <div class="plans-grid">
-      <div class="plan-box" onclick="rechargePlan(1, 3)">
-        <div class="plan-price">₹1</div>
-        <div class="plan-pages">3 Pages</div>
+        <div>
+          <label>Ink Color:</label>
+          <select id="inkSelect">
+            <option value="#0f3460">Royal Blue Pen</option>
+            <option value="#1e293b">Black Gel Pen</option>
+            <option value="#1d4ed8">Light Blue Ink</option>
+            <option value="#831843">Red Checking Ink</option>
+          </select>
+        </div>
       </div>
-      <div class="plan-box" onclick="rechargePlan(9, 50)">
-        <div class="plan-price">₹9</div>
-        <div class="plan-pages">50 Pages</div>
-      </div>
-      <div class="plan-box" onclick="rechargePlan(19, 200)">
-        <div class="plan-price">₹19</div>
-        <div class="plan-pages">200 Pages</div>
-      </div>
-      <div class="plan-box" onclick="rechargePlan(49, 500)">
-        <div class="plan-price">₹49</div>
-        <div class="plan-pages">500 Pages</div>
-      </div>
-      <div class="plan-box" onclick="rechargePlan(99, 1500)">
-        <div class="plan-price">₹99</div>
-        <div class="plan-pages">1500 Pages</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Invisible Render Area -->
-  <div id="hidden-render-container"></div>
+      <div class="grid-2">
+        <div>
+          <label>Paper Style:</label>
+          <select id="styleSelect">
+            <option value="ruled">Ruled (Notebook Lines)</option>
+            <option value="unruled">Plain White Sheet</option>
+          </select>
+        </div>
+        <div>
+          <label>Font Size (px):</label>
+          <input type="number" id="fontSizeInput" value="20" min="14" max="28" />
+        </div>
+      </div>
 
-  <!-- Ad Simulation Modal -->
-  <div class="modal" id="ad-modal">
-    <div class="modal-content">
-      <h3 style="margin-bottom: 8px;">Ad Chal Raha Hai...</h3>
-      <p style="color: #64748b; font-size: 13px;">Reward ke liye thoda wait kijiye</p>
-      <div style="margin: 18px 0; font-weight: bold; font-size: 26px; color: #f59e0b;" id="ad-timer">3</div>
+      <!-- Main Trigger Button -->
+      <button class="btn-primary" onclick="generateHandwrittenPage()">
+        <span>✨</span> Create Handwritten Page
+      </button>
+    </section>
+
+    <!-- Preview & Free Download Section (Visible only after Generation) -->
+    <section class="card" id="previewWrapper">
+      <div class="section-title">📄 Realistic Handwritten Preview:</div>
+      <div class="a4-page-frame">
+        <div id="captureArea" class="a4-sheet ruled">
+          <div id="outputContent" class="paper-text"></div>
+        </div>
+      </div>
+
+      <!-- Free Downloads Once Generated -->
+      <div class="download-grid">
+        <button class="btn-download-jpg" onclick="downloadAsJPG()">📸 Save Image (Free)</button>
+        <button class="btn-download-pdf" onclick="downloadAsPDF()">📄 Save PDF (Free)</button>
+      </div>
+      <p style="font-size: 0.72rem; color: #64748b; text-align: center; margin-top: 8px;">
+        ✅ Page generate hone ke baad downloads bilkul free aur unlimited hain!
+      </p>
+    </section>
+
+    <!-- Monetization: Watch Ad & Recharge -->
+    <section class="card">
+      <div class="section-title">🔋 Balance Khatam Ho Gaya?</div>
+
+      <div class="ad-card">
+        <div style="font-weight: 700; font-size: 0.95rem;">📺 Free Pages Chahiye?</div>
+        <p style="font-size: 0.75rem; margin-top: 2px;">Ek chhota sa 5-second video ad dekhein aur +2 Pages paayein</p>
+        <button class="btn-watch-ad" onclick="simulateWatchAd()">Watch Ad (+2 Pages)</button>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <label>Instant Recharge Plans (Instant Add):</label>
+        <div class="pricing-grid">
+          <div class="plan-box" onclick="handleRecharge(1, 3)">
+            <div class="plan-price">₹1</div>
+            <div class="plan-pages">3 Pages</div>
+          </div>
+          <div class="plan-box" onclick="handleRecharge(9, 50)">
+            <div class="plan-price">₹9</div>
+            <div class="plan-pages">50 Pages</div>
+          </div>
+          <div class="plan-box" onclick="handleRecharge(19, 200)">
+            <div class="plan-price">₹19</div>
+            <div class="plan-pages">200 Pages</div>
+          </div>
+          <div class="plan-box" onclick="handleRecharge(49, 500)">
+            <div class="plan-price">₹49</div>
+            <div class="plan-pages">500 Pages</div>
+          </div>
+          <div class="plan-box" onclick="handleRecharge(99, 1500)">
+            <div class="plan-price">₹99</div>
+            <div class="plan-pages">1500 Pages</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <div class="modal-tabs">
+        <div class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
+        <div class="modal-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
+      </div>
+
+      <input type="text" id="authName" placeholder="Aapka Name" style="display: none;" />
+      <input type="email" id="authEmail" placeholder="Email Address ya Phone" />
+      <input type="password" id="authPassword" placeholder="Password" />
+
+      <button class="btn-primary" id="modalSubmitBtn" onclick="submitAuth()" style="margin-top: 6px;">Login Karein</button>
+      <button onclick="closeAuthModal()" style="width: 100%; background: none; border: none; color: #64748b; margin-top: 10px; font-size: 0.8rem; cursor: pointer;">Cancel</button>
     </div>
   </div>
 
   <script>
-    let pageBalance = parseInt(localStorage.getItem('assignment_user_balance')) || 4;
-    const balanceDisplay = document.getElementById('balance-display');
-    const hiddenContainer = document.getElementById('hidden-render-container');
-    const btnImage = document.getElementById('btn-image');
-    const btnPdf = document.getElementById('btn-pdf');
+    // --- STATE MANAGEMENT ---
+    let currentUser = JSON.parse(localStorage.getItem('a4_user')) || null;
+    let pageBalance = parseInt(localStorage.getItem('a4_balance') || '4');
+    let authMode = 'login';
 
-    function updateBalanceUI() {
-      balanceDisplay.innerText = pageBalance;
-      localStorage.setItem('assignment_user_balance', pageBalance);
-    }
-    updateBalanceUI();
+    // Update UI on start
+    updateUserInterface();
 
-    function watchAdReward() {
-      const modal = document.getElementById('ad-modal');
-      const timerEl = document.getElementById('ad-timer');
-      let countdown = 3;
+    function updateUserInterface() {
+      const balanceDisplay = document.getElementById('balanceDisplay');
+      const authBtn = document.getElementById('authBtn');
 
-      modal.style.display = 'flex';
-      timerEl.innerText = countdown;
+      balanceDisplay.innerText = `Balance: ${pageBalance} Pages`;
 
-      const timer = setInterval(() => {
-        countdown--;
-        timerEl.innerText = countdown;
-        if (countdown <= 0) {
-          clearInterval(timer);
-          modal.style.display = 'none';
-          pageBalance += 2;
-          updateBalanceUI();
-          alert('Badhai ho! 2 Pages add ho gaye.');
-        }
-      }, 1000);
+      if (currentUser) {
+        authBtn.innerText = currentUser.name ? currentUser.name.split(' ')[0] : 'Account';
+        authBtn.onclick = logoutUser;
+      } else {
+        authBtn.innerText = 'Login';
+        authBtn.onclick = openAuthModal;
+      }
+      localStorage.setItem('a4_balance', pageBalance);
     }
 
-    function rechargePlan(rupees, pages) {
-      if (confirm(`₹${rupees} me ${pages} Pages pack unlock karein?`)) {
-        pageBalance += pages;
-        updateBalanceUI();
-        alert(`Success! ₹${rupees} ka plan add ho gaya. +${pages} Pages mile.`);
+    // --- AUTH MODAL SYSTEM ---
+    function openAuthModal() {
+      document.getElementById('authModal').style.display = 'flex';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function switchTab(mode) {
+      authMode = mode;
+      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+      document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
+      document.getElementById('authName').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('modalSubmitBtn').innerText = mode === 'signup' ? 'Account Banayein' : 'Login Karein';
+    }
+
+    function submitAuth() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+      const name = document.getElementById('authName').value.trim();
+
+      if (!email || !password) {
+        alert('Kripya Email aur Password bharein!');
+        return;
+      }
+
+      currentUser = {
+        name: authMode === 'signup' ? (name || 'User') : (email.split('@')[0]),
+        email: email
+      };
+
+      localStorage.setItem('a4_user', JSON.stringify(currentUser));
+      closeAuthModal();
+      updateUserInterface();
+      alert(`Swagat hai, ${currentUser.name}! Aapka account active hai.`);
+    }
+
+    function logoutUser() {
+      if (confirm('Kya aap logout karna chahte hain?')) {
+        currentUser = null;
+        localStorage.removeItem('a4_user');
+        updateUserInterface();
       }
     }
 
-    async function processAndExport(formatType) {
-      const text = document.getElementById('input-text').value.trim();
-      const requestedPages = parseInt(document.getElementById('manual-pages-count').value) || 1;
-      const paperType = document.getElementById('paper-type').value;
-      const font = document.getElementById('font-select').value;
-      const ink = document.getElementById('ink-select').value;
+    // --- CREATE IMAGE (CREDIT DEDUCTION ONCE) ---
+    function generateHandwrittenPage() {
+      const text = document.getElementById('inputText').value.trim();
 
       if (!text) {
-        alert('Pehle text ya answer paste karein!');
+        alert('Pehle text box me question/answer paste karein!');
         return;
       }
 
-      if (pageBalance < requestedPages) {
-        alert(`Aapke paas sirf ${pageBalance} pages ka balance hai. Kripya ad dekhein ya recharge karein!`);
+      // Check balance rule
+      if (pageBalance <= 0) {
+        alert('Aapka page balance khatam ho gaya hai! Kripya Ad dekhein ya recharge karein.');
         return;
       }
 
-      btnImage.disabled = true;
-      btnPdf.disabled = true;
-      if (formatType === 'image') btnImage.innerText = 'Creating JPG...';
-      else btnPdf.innerText = 'Creating PDF...';
+      // Deduct balance ONLY during generation
+      pageBalance -= 1;
+      updateUserInterface();
 
-      pageBalance -= requestedPages;
-      updateBalanceUI();
+      // Configure styles
+      const font = document.getElementById('fontSelect').value;
+      const ink = document.getElementById('inkSelect').value;
+      const style = document.getElementById('styleSelect').value;
+      const size = document.getElementById('fontSizeInput').value + 'px';
 
-      hiddenContainer.innerHTML = '';
+      const sheet = document.getElementById('captureArea');
+      const output = document.getElementById('outputContent');
 
-      const totalChars = text.length;
-      const charsPerPage = Math.ceil(totalChars / requestedPages);
+      sheet.className = `a4-sheet ${style}`;
+      output.style.fontFamily = font;
+      output.style.color = ink;
+      output.style.fontSize = size;
+      output.innerText = text;
 
-      for (let i = 0; i < requestedPages; i++) {
-        const start = i * charsPerPage;
-        const end = start + charsPerPage;
-        const pageText = text.substring(start, end);
+      // Show preview
+      const previewWrapper = document.getElementById('previewWrapper');
+      previewWrapper.style.display = 'block';
+      previewWrapper.scrollIntoView({ behavior: 'smooth' });
+    }
 
-        const pageEl = document.createElement('div');
-        pageEl.className = `a4-page ${paperType}`;
+    // --- DOWNLOADS (COMPLETELY FREE) ---
+    function downloadAsJPG() {
+      const capture = document.getElementById('captureArea');
+      html2canvas(capture, { scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `A4_Handwritten_Page_${Date.now()}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+      });
+    }
 
-        const contentEl = document.createElement('div');
-        contentEl.className = `page-text-content ${ink}`;
-        contentEl.style.fontFamily = font;
-        contentEl.innerText = pageText;
+    function downloadAsPDF() {
+      const { jsPDF } = window.jspdf;
+      const capture = document.getElementById('captureArea');
 
-        const footerTag = document.createElement('div');
-        footerTag.className = 'page-footer-tag';
-        footerTag.innerText = `Page ${i + 1} of ${requestedPages}`;
-
-        pageEl.appendChild(contentEl);
-        pageEl.appendChild(footerTag);
-        hiddenContainer.appendChild(pageEl);
-      }
-
-      const pageElements = hiddenContainer.querySelectorAll('.a4-page');
-
-      if (formatType === 'image') {
-        for (let i = 0; i < pageElements.length; i++) {
-          const canvas = await html2canvas(pageElements[i], { scale: 2, useCORS: true });
-          const link = document.createElement('a');
-          link.download = `A4_Notes_Page_${i + 1}.jpg`;
-          link.href = canvas.toDataURL('image/jpeg', 0.95);
-          link.click();
-        }
-      } else {
-        const { jsPDF } = window.jspdf;
+      html2canvas(capture, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = 210;
-        const pdfHeight = 297;
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        for (let i = 0; i < pageElements.length; i++) {
-          const canvas = await html2canvas(pageElements[i], { scale: 2, useCORS: true });
-          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`A4_Handwritten_Notes_${Date.now()}.pdf`);
+      });
+    }
 
-          if (i > 0) pdf.addPage('a4', 'p');
-          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        }
-        pdf.save('A4_Notes_Maker.pdf');
+    // --- AD SIMULATION & MONETIZATION ---
+    function simulateWatchAd() {
+      alert('5-Second Sponsored Ad play ho raha hai...');
+      setTimeout(() => {
+        pageBalance += 2;
+        updateUserInterface();
+        alert('Ad complete! +2 Pages aapke account me jud gaye hain.');
+      }, 1500);
+    }
+
+    function handleRecharge(amount, pages) {
+      if (!currentUser) {
+        alert('Recharge karne ke liye pehle Login/Signup karein taaki balance safe rahe!');
+        openAuthModal();
+        return;
       }
 
-      hiddenContainer.innerHTML = '';
-      btnImage.disabled = false;
-      btnPdf.disabled = false;
-      btnImage.innerText = '📸 Download Image (JPG)';
-      btnPdf.innerText = '📄 Download PDF';
+      if (confirm(`₹${amount} ka payment karke ${pages} Pages add karna chahte hain?`)) {
+        pageBalance += pages;
+        updateUserInterface();
+        alert(`Payment Successful! ${pages} Pages instantly add ho gaye.`);
+      }
     }
   </script>
-
 </body>
 </html>
