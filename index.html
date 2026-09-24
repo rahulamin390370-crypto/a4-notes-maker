@@ -366,40 +366,42 @@
       callback(canvas);
     }
 
-    function downloadAllJPGDirect() {
+        function downloadAllJPGDirect() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
-      showToast('Opening Gallery Save Window...');
+      showToast('Preparing Image...');
 
       renderSheetToCanvas(sheets[0], function(canvas) {
-        var imgUrl = canvas.toDataURL('image/jpeg', 0.95);
+        canvas.toBlob(async function(blob) {
+          var file = new File([blob], 'A4_Handwritten_Page_1.jpg', { type: 'image/jpeg' });
 
-        var previewWin = document.createElement('div');
-        previewWin.style.position = 'fixed';
-        previewWin.style.top = '0';
-        previewWin.style.left = '0';
-        previewWin.style.right = '0';
-        previewWin.style.bottom = '0';
-        previewWin.style.background = 'rgba(0,0,0,0.85)';
-        previewWin.style.zIndex = '999';
-        previewWin.style.display = 'flex';
-        previewWin.style.flexDirection = 'column';
-        previewWin.style.alignItems = 'center';
-        previewWin.style.justifyContent = 'center';
-        previewWin.style.padding = '15px';
+          // 1. Android Native System Share / Save
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                files: [file],
+                title: 'A4 Notes',
+                text: 'Save your handwritten notes to Gallery'
+              });
+              showToast('Saved / Shared successfully!');
+              return;
+            } catch (err) {
+              console.log('Share canceled or failed', err);
+            }
+          }
 
-        previewWin.innerHTML = `
-          <div style="color: #fff; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; text-align: center;">
-            👇 Photo par 1 second ungli dabakar rakhein (Long Press)<br>aur "Download / Save image" par tap karein
-          </div>
-          <img src="${imgUrl}" style="max-width: 90%; max-height: 70%; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" />
-          <button style="margin-top: 14px; background: #ef4444; color: #fff; border: none; padding: 8px 24px; border-radius: 20px; font-weight: 600; cursor: pointer;" onclick="this.parentElement.remove()">Close</button>
-        `;
-
-        document.body.appendChild(previewWin);
+          // 2. Fallback for browser download
+          var a = document.createElement('a');
+          a.download = 'A4_Handwritten_Page_1.jpg';
+          a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast('Image downloaded to Downloads folder!');
+        }, 'image/jpeg', 0.95);
       });
-    }
-
+        }
+    
     function downloadAllPDFDirect() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
