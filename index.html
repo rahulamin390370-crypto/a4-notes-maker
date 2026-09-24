@@ -402,31 +402,43 @@
       });
         }
     
-    function downloadAllPDFDirect() {
+        async function downloadAllJPGDirect() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
-      showToast('Preparing PDF...');
+      showToast('Saving directly to Gallery...');
 
-      var images = [];
-      var processed = 0;
+      renderSheetToCanvas(sheets[0], async function(canvas) {
+        var base64Data = canvas.toDataURL('image/jpeg', 0.95);
+        var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
+        var fileName = 'A4_Notes_' + Date.now() + '.jpg';
 
-      sheets.forEach(function(s, idx) {
-        renderSheetToCanvas(s, function(canvas) {
-          images[idx] = canvas.toDataURL('image/jpeg', 0.95);
-          processed++;
-          if (processed === sheets.length) {
-            var win = window.open('', '_blank');
-            win.document.write('<html><head><title>A4 Assignment</title><style>@page{size:A4;margin:0}body{margin:0}img{width:100%;page-break-after:always;display:block}</style></head><body>');
-            for (var k = 0; k < images.length; k++) {
-              win.document.write('<img src="' + images[k] + '"/>');
-            }
-            win.document.write('</body></html>');
-            win.document.close();
-            win.print();
+        // Check if running inside Capacitor Android app
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+          try {
+            var Filesystem = window.Capacitor.Plugins.Filesystem;
+            await Filesystem.writeFile({
+              path: fileName,
+              data: cleanBase64,
+              directory: 'DOCUMENTS',
+              recursive: true
+            });
+            showToast('✅ Saved to Phone Storage/Gallery!');
+            return;
+          } catch (err) {
+            console.error('Filesystem error', err);
           }
-        });
+        }
+
+        // Web Browser / Fallback link
+        var a = document.createElement('a');
+        a.download = fileName;
+        a.href = base64Data;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('Image downloaded successfully!');
       });
-    }
+     }
   </script>
 </body>
 </html>
