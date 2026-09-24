@@ -5,14 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A4 Notes Maker</title>
 
-  <!-- Google Fonts: Handwriting Styles & UI Font -->
+  <!-- Google Handwriting Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Indie+Flower&family=Kalam:wght@400;700&family=Patrick+Hand&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Document Export Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     * {
@@ -26,10 +22,10 @@
     body {
       background-color: #f1f5f9;
       color: #0f172a;
-      padding-bottom: 60px;
+      padding-bottom: 70px;
     }
 
-    /* Top Navbar */
+    /* Top Navigation Header */
     .header {
       background: #0f172a;
       color: #ffffff;
@@ -49,7 +45,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      letter-spacing: -0.2px;
     }
 
     .user-actions {
@@ -63,7 +58,7 @@
       color: #ffffff;
       font-size: 0.75rem;
       font-weight: 600;
-      padding: 5px 12px;
+      padding: 6px 12px;
       border-radius: 20px;
     }
 
@@ -78,7 +73,6 @@
       cursor: pointer;
     }
 
-    /* Content Layout */
     .container {
       padding: 16px;
       max-width: 540px;
@@ -121,7 +115,6 @@
       font-size: 0.88rem;
       resize: vertical;
       outline: none;
-      transition: border-color 0.2s;
     }
     textarea:focus {
       border-color: #2563eb;
@@ -146,7 +139,6 @@
       outline: none;
     }
 
-    /* Action Buttons */
     .btn-primary {
       width: 100%;
       background: #2563eb;
@@ -164,10 +156,11 @@
       gap: 8px;
     }
     .btn-primary:active {
+      background: #1d4ed8;
       transform: scale(0.99);
     }
 
-    /* Standard A4 Fixed Dimensions & Styles */
+    /* Fixed A4 Page Sheets */
     #previewWrapper {
       display: none;
       margin-top: 16px;
@@ -197,22 +190,19 @@
       margin-bottom: 6px;
     }
 
-    /* Exact A4 Ratio Sheet (595px x 842px standard) */
     .a4-sheet {
       width: 595px;
       min-width: 595px;
       height: 842px;
       min-height: 842px;
       max-height: 842px;
-      background-color: #fbfbf8;
+      background-color: #fcfbf7;
       position: relative;
-      border-radius: 2px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.12);
       overflow: hidden;
       padding: 70px 40px 50px 75px;
     }
 
-    /* Red Margin Line */
     .a4-sheet.ruled::before {
       content: '';
       position: absolute;
@@ -224,7 +214,6 @@
       z-index: 2;
     }
 
-    /* Calibrated Notebook Lines: 30px row height */
     .a4-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
@@ -240,12 +229,11 @@
       z-index: 3;
       white-space: pre-wrap;
       word-wrap: break-word;
-      line-height: 30px; /* Perfectly matches ruled lines */
+      line-height: 30px;
       height: 100%;
       overflow: hidden;
     }
 
-    /* Export Controls */
     .export-bar {
       display: flex;
       gap: 10px;
@@ -255,7 +243,7 @@
     .btn-export {
       flex: 1;
       border: none;
-      padding: 11px;
+      padding: 12px;
       border-radius: 8px;
       font-weight: 600;
       font-size: 0.82rem;
@@ -263,11 +251,10 @@
       color: #ffffff;
       text-align: center;
     }
-
     .btn-jpg { background: #0284c7; }
     .btn-pdf { background: #059669; }
 
-    /* Monetization Cards */
+    /* Monetization */
     .ad-card {
       background: #fef3c7;
       border: 1px solid #fde68a;
@@ -332,16 +319,15 @@
       font-weight: 500;
     }
 
-    /* Modal Sheet */
+    /* Modal dialog */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15,23,42,0.6);
-      backdrop-filter: blur(4px);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 200;
+      z-index: 500;
       padding: 16px;
     }
 
@@ -351,6 +337,7 @@
       max-width: 340px;
       border-radius: 12px;
       padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
     .modal-box input {
@@ -382,6 +369,23 @@
       color: #2563eb;
       border-bottom: 2px solid #2563eb;
     }
+
+    /* Custom In-App Notification Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
   </style>
 </head>
 <body>
@@ -393,7 +397,7 @@
     </div>
     <div class="user-actions">
       <span class="badge-balance" id="balanceDisplay">Balance: 4 Pages</span>
-      <button class="btn-auth-nav" id="authBtn" onclick="openAuthModal()">Login</button>
+      <button class="btn-auth-nav" id="authBtn" type="button">Login</button>
     </div>
   </header>
 
@@ -407,8 +411,8 @@
         <div>
           <label>Handwriting Font:</label>
           <select id="fontSelect">
-            <option value="'Caveat', cursive">Caveat (Cursive)</option>
             <option value="'Patrick Hand', cursive" selected>Patrick Hand (Neat)</option>
+            <option value="'Caveat', cursive">Caveat (Cursive)</option>
             <option value="'Kalam', cursive">Kalam (Natural)</option>
             <option value="'Indie Flower', cursive">Indie Flower (Casual)</option>
           </select>
@@ -439,7 +443,7 @@
         </div>
       </div>
 
-      <button class="btn-primary" onclick="generateA4Pages()">
+      <button class="btn-primary" id="btnCreatePages" type="button">
         <span>✨</span> Create Handwritten Pages
       </button>
     </section>
@@ -451,13 +455,11 @@
         <span id="pageCountBadge" style="font-size: 0.72rem; color: #64748b; font-weight: normal;"></span>
       </div>
 
-      <div class="pages-container" id="pagesContainer">
-        <!-- Rendered A4 Pages will be appended here dynamically -->
-      </div>
+      <div class="pages-container" id="pagesContainer"></div>
 
       <div class="export-bar">
-        <button class="btn-export btn-jpg" onclick="downloadAllJPG()">Download Images (Free)</button>
-        <button class="btn-export btn-pdf" onclick="downloadAllPDF()">Download Full PDF (Free)</button>
+        <button class="btn-export btn-jpg" id="btnExportJPG" type="button">Download Images (Free)</button>
+        <button class="btn-export btn-pdf" id="btnExportPDF" type="button">Download Full PDF (Free)</button>
       </div>
       <p style="font-size: 0.72rem; color: #64748b; text-align: center; margin-top: 8px;">
         ✅ Unlimited free downloads once pages are created.
@@ -471,29 +473,29 @@
       <div class="ad-card">
         <h4>Need Free Pages?</h4>
         <p>Watch a short 5-second sponsored ad to receive +2 Pages.</p>
-        <button class="btn-watch-ad" onclick="simulateWatchAd()">Watch Ad (+2 Pages)</button>
+        <button class="btn-watch-ad" id="btnWatchAd" type="button">Watch Ad (+2 Pages)</button>
       </div>
 
       <div style="margin-top: 14px;">
         <label>Instant Page Packs:</label>
         <div class="pricing-grid">
-          <div class="plan-box" onclick="handleRecharge(1, 3)">
+          <div class="plan-box" onclick="window.appRecharge(1, 3)">
             <div class="plan-price">₹1</div>
             <div class="plan-pages">3 Pages</div>
           </div>
-          <div class="plan-box" onclick="handleRecharge(9, 50)">
+          <div class="plan-box" onclick="window.appRecharge(9, 50)">
             <div class="plan-price">₹9</div>
             <div class="plan-pages">50 Pages</div>
           </div>
-          <div class="plan-box" onclick="handleRecharge(19, 200)">
+          <div class="plan-box" onclick="window.appRecharge(19, 200)">
             <div class="plan-price">₹19</div>
             <div class="plan-pages">200 Pages</div>
           </div>
-          <div class="plan-box" onclick="handleRecharge(49, 500)">
+          <div class="plan-box" onclick="window.appRecharge(49, 500)">
             <div class="plan-price">₹49</div>
             <div class="plan-pages">500 Pages</div>
           </div>
-          <div class="plan-box" onclick="handleRecharge(99, 1500)">
+          <div class="plan-box" onclick="window.appRecharge(99, 1500)">
             <div class="plan-price">₹99</div>
             <div class="plan-pages">1500 Pages</div>
           </div>
@@ -506,26 +508,71 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-box">
       <div class="modal-tabs">
-        <div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</div>
-        <div class="modal-tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</div>
+        <div class="modal-tab active" id="tabLogin">Login</div>
+        <div class="modal-tab" id="tabSignup">Sign Up</div>
       </div>
 
       <input type="text" id="authName" placeholder="Full Name" style="display: none;" />
       <input type="email" id="authEmail" placeholder="Email or Phone Number" />
       <input type="password" id="authPassword" placeholder="Password" />
 
-      <button class="btn-primary" id="modalSubmitBtn" onclick="submitAuth()" style="margin-top: 6px;">Login</button>
-      <button onclick="closeAuthModal()" style="width: 100%; background: none; border: none; color: #64748b; margin-top: 10px; font-size: 0.8rem; cursor: pointer;">Cancel</button>
+      <button class="btn-primary" id="modalSubmitBtn" type="button" style="margin-top: 6px;">Login</button>
+      <button id="modalCloseBtn" type="button" style="width: 100%; background: none; border: none; color: #64748b; margin-top: 10px; font-size: 0.8rem; cursor: pointer;">Cancel</button>
     </div>
   </div>
 
-  <script>
-    // --- APP STATE ---
-    let currentUser = JSON.parse(localStorage.getItem('a4_user')) || null;
-    let pageBalance = parseInt(localStorage.getItem('a4_balance') || '4');
-    let currentAuthMode = 'login';
+  <!-- Notification Toast -->
+  <div class="toast-msg" id="toastMsg"></div>
 
-    updateUI();
+  <!-- Scripts Loaded at Bottom to avoid blocking -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // --- SAFE STORAGE WRAPPER (Never Crashes in WebView) ---
+    const SafeStorage = {
+      data: {},
+      getItem(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (e) {
+          return this.data[key] || null;
+        }
+      },
+      setItem(key, val) {
+        try {
+          localStorage.setItem(key, val);
+        } catch (e) {
+          this.data[key] = val;
+        }
+      },
+      removeItem(key) {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {
+          delete this.data[key];
+        }
+      }
+    };
+
+    // --- IN-APP TOAST (Replaces alert) ---
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // --- APP STATE ---
+    let currentUser = null;
+    try {
+      currentUser = JSON.parse(SafeStorage.getItem('a4_user')) || null;
+    } catch(e) { currentUser = null; }
+
+    let pageBalance = parseInt(SafeStorage.getItem('a4_balance') || '4');
+    let currentAuthMode = 'login';
 
     function updateUI() {
       document.getElementById('balanceDisplay').innerText = `Balance: ${pageBalance} Pages`;
@@ -533,20 +580,18 @@
 
       if (currentUser) {
         authBtn.innerText = currentUser.name ? currentUser.name.split(' ')[0] : 'Account';
-        authBtn.onclick = logoutUser;
       } else {
         authBtn.innerText = 'Login';
-        authBtn.onclick = openAuthModal;
       }
-      localStorage.setItem('a4_balance', pageBalance);
+      SafeStorage.setItem('a4_balance', pageBalance);
     }
 
-    // --- AUTHENTICATION ---
-    function openAuthModal() {
+    // --- MODAL HANDLING ---
+    function openModal() {
       document.getElementById('authModal').style.display = 'flex';
     }
 
-    function closeAuthModal() {
+    function closeModal() {
       document.getElementById('authModal').style.display = 'none';
     }
 
@@ -558,13 +603,13 @@
       document.getElementById('modalSubmitBtn').innerText = mode === 'signup' ? 'Create Account' : 'Login';
     }
 
-    function submitAuth() {
+    function handleAuthSubmit() {
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value.trim();
       const name = document.getElementById('authName').value.trim();
 
       if (!email || !password) {
-        alert('Please provide your email and password.');
+        showToast('Please enter both email and password');
         return;
       }
 
@@ -573,27 +618,17 @@
         email: email
       };
 
-      localStorage.setItem('a4_user', JSON.stringify(currentUser));
-      closeAuthModal();
+      SafeStorage.setItem('a4_user', JSON.stringify(currentUser));
+      closeModal();
       updateUI();
-      alert(`Welcome back, ${currentUser.name}!`);
+      showToast(`Welcome, ${currentUser.name}!`);
     }
 
-    function logoutUser() {
-      if (confirm('Do you want to log out?')) {
-        currentUser = null;
-        localStorage.removeItem('a4_user');
-        updateUI();
-      }
-    }
-
-    // --- ACCURATE A4 PAGINATION ALGORITHM ---
-    function splitTextIntoA4Pages(fullText, font, size, maxLinesPerPage = 24) {
+    // --- A4 MULTI-PAGE SPLITTER ---
+    function splitTextIntoA4Pages(fullText, maxLinesPerPage = 24) {
       const paragraphs = fullText.split('\n');
       const pages = [];
       let currentPageLines = [];
-
-      // Approximate 60-65 chars per line on A4 width with standard font
       const charsPerLine = 60;
 
       for (let p of paragraphs) {
@@ -640,10 +675,10 @@
     }
 
     // --- CREATE HANDWRITTEN PAGES ---
-    function generateA4Pages() {
+    function createPages() {
       const rawText = document.getElementById('inputText').value.trim();
       if (!rawText) {
-        alert('Please paste some text to create handwritten pages.');
+        showToast('Please paste assignment text first!');
         return;
       }
 
@@ -652,19 +687,17 @@
       const style = document.getElementById('styleSelect').value;
       const size = document.getElementById('fontSizeInput').value + 'px';
 
-      const pageChunks = splitTextIntoA4Pages(rawText, font, size, 24);
+      const pageChunks = splitTextIntoA4Pages(rawText, 24);
       const requiredPages = pageChunks.length;
 
       if (pageBalance < requiredPages) {
-        alert(`Insufficient balance! This text requires ${requiredPages} page(s), but your balance is ${pageBalance} page(s). Please recharge or watch an ad.`);
+        showToast(`Need ${requiredPages} page(s), balance is ${pageBalance}. Watch ad or recharge.`);
         return;
       }
 
-      // Deduct balance per page created
       pageBalance -= requiredPages;
       updateUI();
 
-      // Render separate A4 sheets
       const container = document.getElementById('pagesContainer');
       container.innerHTML = '';
 
@@ -696,13 +729,4 @@
       document.getElementById('pageCountBadge').innerText = `Total: ${requiredPages} Page(s)`;
       const previewWrapper = document.getElementById('previewWrapper');
       previewWrapper.style.display = 'block';
-      previewWrapper.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // --- FREE DOWNLOAD EXPORTS ---
-    async function downloadAllJPG() {
-      const sheets = document.querySelectorAll('.a4-sheet');
-      for (let i = 0; i < sheets.length; i++) {
-        const canvas = await html2canvas(sheets[i], { scale: 2, useCORS: true });
-        const link = document.createElement('a');
-        link.download = `Handwritten_Page_${i + 1}.jpg`;
+ 
