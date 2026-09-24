@@ -729,4 +729,86 @@
       document.getElementById('pageCountBadge').innerText = `Total: ${requiredPages} Page(s)`;
       const previewWrapper = document.getElementById('previewWrapper');
       previewWrapper.style.display = 'block';
- 
+       previewWrapper.scrollIntoView({ behavior: 'smooth' });
+      showToast('Handwritten pages created successfully!');
+    }
+
+    // --- EXPORTS ---
+    window.downloadAllJPG = async function() {
+      const sheets = document.querySelectorAll('.a4-sheet');
+      if (sheets.length === 0) return;
+      showToast('Generating images...');
+      for (let i = 0; i < sheets.length; i++) {
+        const canvas = await html2canvas(sheets[i], { scale: 2 });
+        const link = document.createElement('a');
+        link.download = `Handwritten_Page_${i + 1}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+      }
+    };
+
+    window.downloadAllPDF = async function() {
+      const sheets = document.querySelectorAll('.a4-sheet');
+      if (sheets.length === 0) return;
+      showToast('Generating PDF...');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      for (let i = 0; i < sheets.length; i++) {
+        const canvas = await html2canvas(sheets[i], { scale: 2 });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        if (i > 0) pdf.addPage('a4', 'p');
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+      }
+      pdf.save(`Handwritten_Notes_${Date.now()}.pdf`);
+    };
+
+    // --- MONETIZATION ---
+    window.appRecharge = function(amount, pages) {
+      if (!currentUser) {
+        showToast('Please Login first to protect your balance');
+        openModal();
+        return;
+      }
+      pageBalance += pages;
+      updateUI();
+      showToast(`Success! +${pages} Pages added to account`);
+    };
+
+    // --- EVENT LISTENERS ATTACHMENT ---
+    document.addEventListener('DOMContentLoaded', () => {
+      updateUI();
+
+      document.getElementById('authBtn').addEventListener('click', () => {
+        if (currentUser) {
+          currentUser = null;
+          SafeStorage.removeItem('a4_user');
+          updateUI();
+          showToast('Logged out successfully');
+        } else {
+          openModal();
+        }
+      });
+
+      document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+      document.getElementById('tabLogin').addEventListener('click', () => switchAuthTab('login'));
+      document.getElementById('tabSignup').addEventListener('click', () => switchAuthTab('signup'));
+      document.getElementById('modalSubmitBtn').addEventListener('click', handleAuthSubmit);
+      document.getElementById('btnCreatePages').addEventListener('click', createPages);
+      document.getElementById('btnExportJPG').addEventListener('click', window.downloadAllJPG);
+      document.getElementById('btnExportPDF').addEventListener('click', window.downloadAllPDF);
+
+      document.getElementById('btnWatchAd').addEventListener('click', () => {
+        showToast('Playing 5-second video ad...');
+        setTimeout(() => {
+          pageBalance += 2;
+          updateUI();
+          showToast('Ad completed! +2 Pages credited.');
+        }, 1500);
+      });
+    });
+  </s    });
+  </script>
+</body>
+</html>
+
