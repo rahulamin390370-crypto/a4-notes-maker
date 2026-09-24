@@ -4,38 +4,93 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A4 Notes Maker</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Indie+Flower&family=Patrick+Hand&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background: #f1f5f9; color: #0f172a; padding-bottom: 50px; }
-    .header { background: #0f172a; color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-    .brand { font-weight: 700; font-size: 1rem; }
-    .balance-badge { background: #10b981; color: #fff; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; font-weight: 600; }
-    .btn-login { background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: #f1f5f9; color: #0f172a; padding-bottom: 60px; }
+
+    .header {
+      background: #0f172a; color: #fff; padding: 14px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .brand { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
+    .badge { background: #10b981; color: #fff; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; font-weight: 600; }
+    .btn-auth { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+
     .container { padding: 14px; max-width: 480px; margin: 0 auto; }
     .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 14px; border: 1px solid #e2e8f0; }
+
     label { font-size: 0.78rem; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; }
-    textarea { width: 100%; height: 120px; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.88rem; outline: none; }
+    textarea { width: 100%; height: 110px; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.88rem; outline: none; }
+
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    select, input { width: 100%; padding: 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 0.82rem; }
-    .btn-main { width: 100%; background: #2563eb; color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 0.92rem; font-weight: 700; margin-top: 12px; cursor: pointer; }
+    select, input { width: 100%; padding: 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 0.82rem; background: #fff; }
+
+    .btn-main {
+      width: 100%; background: #2563eb; color: #fff; border: none;
+      padding: 13px; border-radius: 8px; font-size: 0.92rem; font-weight: 700;
+      margin-top: 12px; cursor: pointer;
+    }
+
+    /* Fixed Realistic A4 Paper (Standard 210mm x 297mm scaling) */
     .pages-wrap { display: flex; flex-direction: column; gap: 16px; overflow-x: auto; margin-top: 10px; }
-    .a4-box { background: #e2e8f0; padding: 8px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
-    .page-title { font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 4px; }
-    .a4-sheet { width: 380px; height: 538px; background: #fffdf7; position: relative; padding: 40px 25px 30px 45px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; border-radius: 2px; }
-    .a4-sheet.ruled::before { content: ''; position: absolute; top: 0; bottom: 0; left: 38px; width: 1.5px; background: #f87171; z-index: 2; }
-    .a4-sheet.ruled { background-image: repeating-linear-gradient(transparent, transparent 25px, #cbd5e1 25px, #cbd5e1 26px); background-position: 0 25px; }
-    .paper-text { position: relative; z-index: 3; font-size: 15px; line-height: 26px; white-space: pre-wrap; word-wrap: break-word; }
-    .btn-print { background: #059669; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; width: 100%; margin-top: 12px; font-size: 0.85rem; cursor: pointer; }
+    .a4-box { background: #cbd5e1; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
+    .page-title { font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+
+    .a4-canvas-sheet {
+      width: 380px; height: 537px; background: #fffdf5; position: relative;
+      border-radius: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 45px 25px 25px 45px; overflow: hidden;
+    }
+
+    /* Realistic Red Margin Line */
+    .a4-canvas-sheet.ruled::before {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 40px;
+      width: 1.5px; background: rgba(239, 68, 68, 0.75); z-index: 2;
+    }
+
+    /* Calibrated Ruled Lines */
+    .a4-canvas-sheet.ruled {
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 25px,
+        rgba(148, 163, 184, 0.45) 25px,
+        rgba(148, 163, 184, 0.45) 26px
+      );
+      background-position: 0 45px;
+    }
+
+    /* Human handwriting jitter effect */
+    .handwriting-text {
+      position: relative; z-index: 3;
+      line-height: 26px; white-space: pre-wrap; word-wrap: break-word;
+      text-shadow: 0.2px 0.2px 0.5px rgba(0,0,0,0.15);
+      letter-spacing: 0.3px;
+    }
+
+    .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .btn-exp-jpg { background: #0284c7; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+    .btn-exp-pdf { background: #059669; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+
+    /* Monetization & Subscriptions */
     .ad-box { background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; text-align: center; }
     .btn-ad { background: #d97706; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; margin-top: 6px; cursor: pointer; }
+
     .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-    .pack { border: 1px solid #cbd5e1; padding: 8px 4px; text-align: center; border-radius: 6px; cursor: pointer; }
+    .pack { border: 1.5px solid #e2e8f0; padding: 8px 4px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; }
+    .pack:active { border-color: #2563eb; background: #eff6ff; }
+    .pack-price { font-weight: 700; font-size: 0.95rem; }
+    .pack-pages { font-size: 0.7rem; color: #64748b; }
+
     .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 200; padding: 14px; }
     .modal-content { background: #fff; width: 100%; max-width: 320px; border-radius: 10px; padding: 18px; }
-    .modal-content input { margin-bottom: 8px; }
+    .modal-content input { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; display: none; z-index: 300; }
   </style>
 </head>
@@ -44,29 +99,31 @@
   <header class="header">
     <div class="brand">📝 A4 Notes Maker</div>
     <div style="display: flex; gap: 8px; align-items: center;">
-      <span class="balance-badge" id="balBadge">Balance: 4 Pages</span>
-      <button class="btn-login" id="navAuthBtn" onclick="toggleAuthModal()">Login</button>
+      <span class="badge" id="balBadge">Balance: 4 Pages</span>
+      <button class="btn-auth" id="navAuthBtn" onclick="toggleModal()">Login</button>
     </div>
   </header>
 
   <main class="container">
     <section class="card">
-      <label>Paste Assignment Text:</label>
-      <textarea id="textInput" placeholder="Type or paste your notes here..."></textarea>
+      <label>Paste Assignment / Notes Text:</label>
+      <textarea id="textInput" placeholder="Paste your question and answer text here..."></textarea>
 
       <div class="grid">
         <div>
-          <label>Font:</label>
+          <label>Handwriting Font:</label>
           <select id="fontFamily">
-            <option value="'Patrick Hand', cursive">Patrick Hand</option>
-            <option value="'Caveat', cursive">Caveat</option>
+            <option value="'Patrick Hand', cursive">Patrick Hand (Neat School)</option>
+            <option value="'Caveat', cursive">Caveat (Stylist Cursive)</option>
+            <option value="'Indie Flower', cursive">Indie Flower (Natural)</option>
           </select>
         </div>
         <div>
           <label>Ink Color:</label>
           <select id="fontColor">
-            <option value="#0d3b66">Royal Blue</option>
-            <option value="#1e293b">Black Ink</option>
+            <option value="#0d3b66">Royal Blue Pen</option>
+            <option value="#1e293b">Black Gel Pen</option>
+            <option value="#1e40af">Light Ink</option>
           </select>
         </div>
       </div>
@@ -75,25 +132,34 @@
         <div>
           <label>Paper Style:</label>
           <select id="paperType">
-            <option value="ruled">Ruled (Lines)</option>
-            <option value="plain">Plain White</option>
+            <option value="ruled">Ruled Notebook Page</option>
+            <option value="plain">Plain White A4</option>
           </select>
         </div>
         <div>
-          <label>Font Size:</label>
-          <input type="number" id="fontSize" value="16" min="12" max="22" />
+          <label>Font Size (px):</label>
+          <input type="number" id="fontSize" value="15" min="13" max="20" />
         </div>
       </div>
 
-      <button class="btn-main" onclick="onGenerateClick()">✨ Create Handwritten Pages</button>
+      <button class="btn-main" onclick="onGenerateClick()">✨ Create Realistic A4 Pages</button>
     </section>
 
+    <!-- Output Section -->
     <section class="card" id="outputCard" style="display: none;">
-      <h3 style="font-size: 0.9rem; margin-bottom: 10px;">Generated A4 Sheets</h3>
+      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Handwritten Pages:</h3>
       <div class="pages-wrap" id="sheetsWrap"></div>
-      <button class="btn-print" onclick="window.print()">📥 Print / Save as PDF (Free)</button>
+
+      <div class="export-grid">
+        <button class="btn-exp-jpg" onclick="downloadAllJPGDirect()">📥 Download JPG (Free)</button>
+        <button class="btn-exp-pdf" onclick="downloadAllPDFDirect()">📄 Download PDF (Free)</button>
+      </div>
+      <p style="font-size: 0.72rem; color: #64748b; text-align: center; margin-top: 8px;">
+        ✅ Unlimited free downloads once created.
+      </p>
     </section>
 
+    <!-- Subscriptions & Recharge -->
     <section class="card">
       <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Recharge & Balance</h3>
       <div class="ad-box">
@@ -102,10 +168,15 @@
         <button class="btn-ad" onclick="onWatchAd()">Watch Ad (+2 Pages)</button>
       </div>
 
-      <div class="packs">
-        <div class="pack" onclick="addPack(1, 3)"><strong>₹1</strong><div style="font-size: 0.7rem; color: #64748b;">3 Pages</div></div>
-        <div class="pack" onclick="addPack(9, 50)"><strong>₹9</strong><div style="font-size: 0.7rem; color: #64748b;">50 Pages</div></div>
-        <div class="pack" onclick="addPack(19, 200)"><strong>₹19</strong><div style="font-size: 0.7rem; color: #64748b;">200 Pages</div></div>
+      <div style="margin-top: 12px;">
+        <label>Instant Recharge Plans:</label>
+        <div class="packs">
+          <div class="pack" onclick="addPack(1, 3)"><div class="pack-price">₹1</div><div class="pack-pages">3 Pages</div></div>
+          <div class="pack" onclick="addPack(9, 50)"><div class="pack-price">₹9</div><div class="pack-pages">50 Pages</div></div>
+          <div class="pack" onclick="addPack(19, 200)"><div class="pack-price">₹19</div><div class="pack-pages">200 Pages</div></div>
+          <div class="pack" onclick="addPack(49, 500)"><div class="pack-price">₹49</div><div class="pack-pages">500 Pages</div></div>
+          <div class="pack" onclick="addPack(99, 1500)"><div class="pack-price">₹99</div><div class="pack-pages">1500 Pages</div></div>
+        </div>
       </div>
     </section>
   </main>
@@ -115,8 +186,8 @@
       <h3 style="font-size: 0.95rem; margin-bottom: 10px;">Account Login</h3>
       <input type="email" id="userEmail" placeholder="Email Address" />
       <input type="password" id="userPass" placeholder="Password" />
-      <button class="btn-main" style="margin-top: 4px;" onclick="onLoginSubmit()">Login / Sign Up</button>
-      <button style="width: 100%; border: none; background: none; margin-top: 8px; color: #64748b; font-size: 0.8rem;" onclick="toggleAuthModal()">Cancel</button>
+      <button class="btn-main" onclick="onLoginSubmit()">Login</button>
+      <button style="width: 100%; border: none; background: none; margin-top: 8px; color: #64748b; font-size: 0.8rem; cursor: pointer;" onclick="toggleModal()">Cancel</button>
     </div>
   </div>
 
@@ -126,7 +197,7 @@
     var balance = 4;
     var loggedInUser = null;
 
-    function toast(text) {
+    function showToast(text) {
       var t = document.getElementById('toast');
       t.innerText = text;
       t.style.display = 'block';
@@ -143,7 +214,7 @@
       }
     }
 
-    function toggleAuthModal() {
+    function toggleModal() {
       var m = document.getElementById('loginModal');
       m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
     }
@@ -152,39 +223,40 @@
       var email = document.getElementById('userEmail').value.trim();
       var pass = document.getElementById('userPass').value.trim();
       if (!email || !pass) {
-        toast('Please enter email and password');
+        showToast('Please enter both email and password');
         return;
       }
       loggedInUser = email.split('@')[0];
-      toggleAuthModal();
+      toggleModal();
       syncUI();
-      toast('Welcome, ' + loggedInUser + '!');
+      showToast('Welcome, ' + loggedInUser + '!');
     }
 
     function onWatchAd() {
-      toast('Playing sponsored ad...');
+      showToast('Playing 5-second sponsored ad...');
       setTimeout(function() {
         balance += 2;
         syncUI();
-        toast('Ad reward: +2 Pages added!');
-      }, 1000);
+        showToast('Ad Reward: +2 Pages added!');
+      }, 1200);
     }
 
     function addPack(price, pages) {
       if (!loggedInUser) {
-        toast('Please login first to protect your balance');
-        toggleAuthModal();
+        showToast('Please Login first to protect your account balance');
+        toggleModal();
         return;
       }
       balance += pages;
       syncUI();
-      toast('Added ' + pages + ' Pages successfully!');
+      showToast('Recharge Successful! +' + pages + ' Pages added.');
     }
 
+    // Dynamic A4 text chunking (~420 chars per fixed A4 view)
     function onGenerateClick() {
       var text = document.getElementById('textInput').value.trim();
       if (!text) {
-        toast('Please paste your text first!');
+        showToast('Please paste assignment text first!');
         return;
       }
 
@@ -193,17 +265,16 @@
       var style = document.getElementById('paperType').value;
       var size = document.getElementById('fontSize').value + 'px';
 
-      // Split text into chunks (~450 characters per A4 page view)
       var chunks = [];
       var remaining = text;
       while (remaining.length > 0) {
-        chunks.push(remaining.substring(0, 450));
-        remaining = remaining.substring(450);
+        chunks.push(remaining.substring(0, 420));
+        remaining = remaining.substring(420);
       }
 
       var required = chunks.length;
       if (balance < required) {
-        toast('Need ' + required + ' Pages, Balance: ' + balance + '. Watch ad or recharge.');
+        showToast('Need ' + required + ' Pages, Balance: ' + balance + '. Watch ad or recharge.');
         return;
       }
 
@@ -222,10 +293,11 @@
         title.innerText = 'Page ' + (i + 1) + ' of ' + required;
 
         var sheet = document.createElement('div');
-        sheet.className = 'a4-sheet ' + style;
+        sheet.className = 'a4-canvas-sheet ' + style;
+        sheet.id = 'sheet-node-' + i;
 
         var p = document.createElement('div');
-        p.className = 'paper-text';
+        p.className = 'handwriting-text';
         p.style.fontFamily = font;
         p.style.color = ink;
         p.style.fontSize = size;
@@ -240,7 +312,114 @@
       var outCard = document.getElementById('outputCard');
       outCard.style.display = 'block';
       outCard.scrollIntoView({ behavior: 'smooth' });
-      toast('Pages generated successfully!');
+      showToast('Pages created! Downloads are free.');
+    }
+
+    // Direct Pure Native Canvas Generator (Android WebView Compatible)
+    function renderSheetToCanvas(sheetEl, callback) {
+      var canvas = document.createElement('canvas');
+      canvas.width = 760;
+      canvas.height = 1074;
+      var ctx = canvas.getContext('2d');
+
+      // Paper Background
+      ctx.fillStyle = '#fffdf5';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (sheetEl.classList.contains('ruled')) {
+        // Draw Notebook Lines
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        for (var y = 90; y < canvas.height - 40; y += 52) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        // Draw Left Margin
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(80, 0);
+        ctx.lineTo(80, canvas.height);
+        ctx.stroke();
+      }
+
+      // Draw Handwritten Text
+      var textNode = sheetEl.querySelector('.handwriting-text');
+      var text = textNode.innerText;
+      var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Patrick Hand';
+      
+      ctx.fillStyle = textNode.style.color || '#0d3b66';
+      ctx.font = '30px ' + fontName + ', sans-serif';
+
+      var words = text.split(' ');
+      var line = '';
+      var startX = sheetEl.classList.contains('ruled') ? 100 : 60;
+      var startY = 82;
+      var lineHeight = 52;
+      var maxLineWidth = canvas.width - startX - 50;
+
+      for (var n = 0; n < words.length; n++) {
+        var testLine = line + words[n] + ' ';
+        var metrics = ctx.measureText(testLine);
+        if (metrics.width > maxLineWidth && n > 0) {
+          ctx.fillText(line, startX, startY);
+          line = words[n] + ' ';
+          startY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, startX, startY);
+
+      callback(canvas);
+    }
+
+    function downloadAllJPGDirect() {
+      var sheets = document.querySelectorAll('.a4-canvas-sheet');
+      if (sheets.length === 0) return;
+      showToast('Saving Images...');
+
+      sheets.forEach(function(s, idx) {
+        renderSheetToCanvas(s, function(canvas) {
+          var a = document.createElement('a');
+          a.download = 'A4_Handwritten_Page_' + (idx + 1) + '.jpg';
+          a.href = canvas.toDataURL('image/jpeg', 0.95);
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      });
+      showToast('JPG Download completed!');
+    }
+
+    function downloadAllPDFDirect() {
+      var sheets = document.querySelectorAll('.a4-canvas-sheet');
+      if (sheets.length === 0) return;
+      showToast('Preparing PDF...');
+
+      var images = [];
+      var processed = 0;
+
+      sheets.forEach(function(s, idx) {
+        renderSheetToCanvas(s, function(canvas) {
+          images[idx] = canvas.toDataURL('image/jpeg', 0.95);
+          processed++;
+          if (processed === sheets.length) {
+            // Printable PDF generation through webview
+            var win = window.open('', '_blank');
+            win.document.write('<html><head><title>A4 Assignment</title><style>@page{size:A4;margin:0}body{margin:0}img{width:100%;page-break-after:always;display:block}</style></head><body>');
+            for (var k = 0; k < images.length; k++) {
+              win.document.write('<img src="' + images[k] + '"/>');
+            }
+            win.document.write('</body></html>');
+            win.document.close();
+            win.print();
+          }
+        });
+      });
     }
   </script>
 </body>
