@@ -37,7 +37,6 @@
       margin-top: 12px; cursor: pointer;
     }
 
-    /* Fixed Realistic A4 Paper (Standard 210mm x 297mm scaling) */
     .pages-wrap { display: flex; flex-direction: column; gap: 16px; overflow-x: auto; margin-top: 10px; }
     .a4-box { background: #cbd5e1; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
     .page-title { font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
@@ -48,13 +47,11 @@
       padding: 45px 25px 25px 45px; overflow: hidden;
     }
 
-    /* Realistic Red Margin Line */
     .a4-canvas-sheet.ruled::before {
       content: ''; position: absolute; top: 0; bottom: 0; left: 40px;
       width: 1.5px; background: rgba(239, 68, 68, 0.75); z-index: 2;
     }
 
-    /* Calibrated Ruled Lines */
     .a4-canvas-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
@@ -65,7 +62,6 @@
       background-position: 0 45px;
     }
 
-    /* Human handwriting jitter effect */
     .handwriting-text {
       position: relative; z-index: 3;
       line-height: 26px; white-space: pre-wrap; word-wrap: break-word;
@@ -77,7 +73,6 @@
     .btn-exp-jpg { background: #0284c7; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
     .btn-exp-pdf { background: #059669; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
 
-    /* Monetization & Subscriptions */
     .ad-box { background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; text-align: center; }
     .btn-ad { background: #d97706; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; margin-top: 6px; cursor: pointer; }
 
@@ -151,7 +146,7 @@
       <div class="pages-wrap" id="sheetsWrap"></div>
 
       <div class="export-grid">
-        <button class="btn-exp-jpg" onclick="downloadAllJPGDirect()">📥 Download JPG (Free)</button>
+        <button class="btn-exp-jpg" onclick="downloadAllJPGDirect()">📥 Download JPG (Gallery)</button>
         <button class="btn-exp-pdf" onclick="downloadAllPDFDirect()">📄 Download PDF (Free)</button>
       </div>
       <p style="font-size: 0.72rem; color: #64748b; text-align: center; margin-top: 8px;">
@@ -252,7 +247,6 @@
       showToast('Recharge Successful! +' + pages + ' Pages added.');
     }
 
-    // Dynamic A4 text chunking (~420 chars per fixed A4 view)
     function onGenerateClick() {
       var text = document.getElementById('textInput').value.trim();
       if (!text) {
@@ -315,19 +309,16 @@
       showToast('Pages created! Downloads are free.');
     }
 
-    // Direct Pure Native Canvas Generator (Android WebView Compatible)
     function renderSheetToCanvas(sheetEl, callback) {
       var canvas = document.createElement('canvas');
       canvas.width = 760;
       canvas.height = 1074;
       var ctx = canvas.getContext('2d');
 
-      // Paper Background
       ctx.fillStyle = '#fffdf5';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (sheetEl.classList.contains('ruled')) {
-        // Draw Notebook Lines
         ctx.strokeStyle = '#cbd5e1';
         ctx.lineWidth = 1;
         for (var y = 90; y < canvas.height - 40; y += 52) {
@@ -337,7 +328,6 @@
           ctx.stroke();
         }
 
-        // Draw Left Margin
         ctx.strokeStyle = '#ef4444';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -346,7 +336,6 @@
         ctx.stroke();
       }
 
-      // Draw Handwritten Text
       var textNode = sheetEl.querySelector('.handwriting-text');
       var text = textNode.innerText;
       var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Patrick Hand';
@@ -380,19 +369,35 @@
     function downloadAllJPGDirect() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
-      showToast('Saving Images...');
+      showToast('Opening Gallery Save Window...');
 
-      sheets.forEach(function(s, idx) {
-        renderSheetToCanvas(s, function(canvas) {
-          var a = document.createElement('a');
-          a.download = 'A4_Handwritten_Page_' + (idx + 1) + '.jpg';
-          a.href = canvas.toDataURL('image/jpeg', 0.95);
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        });
+      renderSheetToCanvas(sheets[0], function(canvas) {
+        var imgUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+        var previewWin = document.createElement('div');
+        previewWin.style.position = 'fixed';
+        previewWin.style.top = '0';
+        previewWin.style.left = '0';
+        previewWin.style.right = '0';
+        previewWin.style.bottom = '0';
+        previewWin.style.background = 'rgba(0,0,0,0.85)';
+        previewWin.style.zIndex = '999';
+        previewWin.style.display = 'flex';
+        previewWin.style.flexDirection = 'column';
+        previewWin.style.alignItems = 'center';
+        previewWin.style.justifyContent = 'center';
+        previewWin.style.padding = '15px';
+
+        previewWin.innerHTML = `
+          <div style="color: #fff; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; text-align: center;">
+            👇 Photo par 1 second ungli dabakar rakhein (Long Press)<br>aur "Download / Save image" par tap karein
+          </div>
+          <img src="${imgUrl}" style="max-width: 90%; max-height: 70%; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" />
+          <button style="margin-top: 14px; background: #ef4444; color: #fff; border: none; padding: 8px 24px; border-radius: 20px; font-weight: 600; cursor: pointer;" onclick="this.parentElement.remove()">Close</button>
+        `;
+
+        document.body.appendChild(previewWin);
       });
-      showToast('JPG Download completed!');
     }
 
     function downloadAllPDFDirect() {
@@ -408,7 +413,6 @@
           images[idx] = canvas.toDataURL('image/jpeg', 0.95);
           processed++;
           if (processed === sheets.length) {
-            // Printable PDF generation through webview
             var win = window.open('', '_blank');
             win.document.write('<html><head><title>A4 Assignment</title><style>@page{size:A4;margin:0}body{margin:0}img{width:100%;page-break-after:always;display:block}</style></head><body>');
             for (var k = 0; k < images.length; k++) {
