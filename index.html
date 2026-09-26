@@ -60,46 +60,69 @@
       margin-top: 12px; cursor: pointer;
     }
 
-    /* Authentic A4 Notebook Style */
-    .pages-wrap { display: flex; flex-direction: column; gap: 18px; margin-top: 12px; }
-    .a4-box { background: #64748b; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
-    .page-title { font-size: 0.75rem; font-weight: 600; color: #f8fafc; margin-bottom: 6px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    /* Outer Wrapper for responsive fit (Never overflows screen) */
+    .pages-wrap {
+      display: flex; flex-direction: column; gap: 18px; margin-top: 12px;
+      width: 100%; overflow: hidden;
+    }
+    
+    .a4-box {
+      background: #475569; padding: 10px; border-radius: 8px;
+      display: flex; flex-direction: column; align-items: center; width: 100%;
+    }
+    .page-title {
+      font-size: 0.75rem; font-weight: 600; color: #f8fafc;
+      margin-bottom: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center;
+    }
     .btn-page-jpg { background: #0284c7; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
+    /* Scaled Responsive Sheet View */
+    .sheet-viewport {
+      width: 100%; display: flex; justify-content: center; overflow: hidden;
+    }
+
     .a4-canvas-sheet {
-      width: 380px; height: 537px; background: #fffdf5; position: relative;
-      border-radius: 2px; box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-      padding: 50px 22px 25px 45px; overflow: hidden;
+      width: 100%; max-width: 380px; height: 537px;
+      background: #fbfbf4; position: relative; border-radius: 2px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      padding: 56px 18px 20px 42px; overflow: hidden;
     }
 
-    /* Top Red Header Line */
-    .a4-canvas-sheet.ruled::after {
-      content: ''; position: absolute; top: 48px; left: 0; right: 0;
-      height: 1.5px; background: rgba(239, 68, 68, 0.85); z-index: 2;
-    }
-
-    /* Left Red Margin Line */
+    /* Double Header Line (Red / Rose Top Margin) */
     .a4-canvas-sheet.ruled::before {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 38px;
-      width: 1.5px; background: rgba(239, 68, 68, 0.85); z-index: 2;
+      content: ''; position: absolute; top: 48px; left: 0; right: 0;
+      height: 1px; background: rgba(239, 68, 68, 0.8); z-index: 2;
+      box-shadow: 0 3px 0 rgba(239, 68, 68, 0.8);
     }
 
-    /* Notebook Ruled Grid */
+    /* Left Vertical Double Margin Line */
+    .a4-canvas-sheet.ruled::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 34px;
+      width: 1px; background: rgba(239, 68, 68, 0.8); z-index: 2;
+      box-shadow: 3px 0 0 rgba(239, 68, 68, 0.8);
+    }
+
+    /* Ruled Lines (Light Cyan / Blue Tint) */
     .a4-canvas-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
-        transparent 23px,
-        rgba(147, 197, 253, 0.65) 23px,
-        rgba(147, 197, 253, 0.65) 24px
+        transparent 21px,
+        rgba(147, 197, 253, 0.5) 21px,
+        rgba(147, 197, 253, 0.5) 22px
       );
-      background-position: 0 48px;
+      background-position: 0 54px;
     }
 
     .handwriting-text {
       position: relative; z-index: 3;
       white-space: pre-wrap; word-wrap: break-word;
-      letter-spacing: 0.3px;
+      line-height: 22px; /* Exactly locked to paper ruling */
     }
+
+    /* Highlight styles like topper notes */
+    .hl-green { background: rgba(134, 239, 172, 0.5); padding: 0 4px; border-radius: 3px; }
+    .hl-blue { background: rgba(147, 197, 253, 0.5); padding: 0 4px; border-radius: 3px; }
+    .hl-box { border: 1.5px solid #ec4899; padding: 2px 6px; border-radius: 6px; background: rgba(251, 207, 232, 0.3); }
 
     .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
     .btn-exp-all-jpg { background: #0284c7; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
@@ -135,7 +158,7 @@
   <main class="container">
     <section class="card">
       <label>Paste Assignment / Question & Answer:</label>
-      <textarea id="textInput" placeholder="Paste your text here..."></textarea>
+      <textarea id="textInput" placeholder="Q. Explain topic...&#10;Answer: Your detailed notes here..."></textarea>
 
       <div class="grid">
         <div>
@@ -152,9 +175,9 @@
         <div>
           <label>Handwriting Font:</label>
           <select id="fontFamily">
-            <option value="'Patrick Hand', cursive">Patrick Hand (Neat)</option>
-            <option value="'Caveat', cursive">Caveat (Cursive)</option>
-            <option value="'Kalam', cursive">Kalam (Natural)</option>
+            <option value="'Patrick Hand', cursive">Patrick Hand (Neat Topper)</option>
+            <option value="'Caveat', cursive">Caveat (Flowing Script)</option>
+            <option value="'Kalam', cursive">Kalam (Natural Pen)</option>
           </select>
         </div>
       </div>
@@ -163,16 +186,16 @@
         <div>
           <label>Paper Style:</label>
           <select id="paperType">
-            <option value="ruled">Ruled Notebook (Top & Margin Lines)</option>
-            <option value="plain">Plain White Sheet</option>
+            <option value="ruled">Assignment Ruled (Double Margin)</option>
+            <option value="plain">Plain White A4</option>
           </select>
         </div>
         <div>
           <label>Pen Ink Color:</label>
           <select id="fontColor">
             <option value="#0d3b66">Royal Blue Ball Pen</option>
-            <option value="#1e293b">Black Gel Pen</option>
-            <option value="#1e40af">Bright Blue Ink</option>
+            <option value="#1e293b">Dark Black Gel</option>
+            <option value="#1d4ed8">Classic Blue Ink</option>
           </select>
         </div>
       </div>
@@ -182,12 +205,12 @@
 
     <!-- Preview & Export -->
     <section class="card" id="outputCard" style="display: none;">
-      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Realistic Pages:</h3>
+      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Handwritten Pages:</h3>
       <div class="pages-wrap" id="sheetsWrap"></div>
 
       <div class="export-grid">
         <button class="btn-exp-all-jpg" onclick="downloadAllJPGs()">📥 Save All Pages (JPG)</button>
-        <button class="btn-exp-pdf" onclick="downloadCombinedPDF()">📄 Save as PDF (Free)</button>
+        <button class="btn-exp-pdf" onclick="downloadCombinedPDF()">📄 Save Full PDF (Free)</button>
       </div>
       <p style="font-size: 0.72rem; color: var(--subtext); text-align: center; margin-top: 8px;">
         ✅ Unlimited free downloads once created.
@@ -297,7 +320,6 @@
       showToast('Recharge Successful! +' + pages + ' Pages added.');
     }
 
-    // Auto-fit & Paginate Text Algorithm
     function chunkTextByTarget(text, targetPages) {
       var totalChars = text.length;
       var chunks = [];
@@ -321,6 +343,24 @@
       return chunks;
     }
 
+    function formatTextToNotesHTML(plainText) {
+      var lines = plainText.split('\n');
+      var html = '';
+      for (var i = 0; i < lines.length; i++) {
+        var l = lines[i].trim();
+        if (l.startsWith('Q.') || l.startsWith('Question:')) {
+          html += '<div style="margin-bottom: 4px;"><span class="hl-box">' + l + '</span></div>';
+        } else if (l.startsWith('Answer:') || l.startsWith('Ans:')) {
+          html += '<div style="margin-bottom: 2px;"><span style="color: #ec4899; font-weight: bold; text-decoration: underline;">' + l + '</span></div>';
+        } else if (l.endsWith(':') && l.length < 35) {
+          html += '<div style="margin-top: 4px;"><span class="hl-green">' + l + '</span></div>';
+        } else {
+          html += '<div>' + l + '</div>';
+        }
+      }
+      return html;
+    }
+
     function onGenerateClick() {
       var text = document.getElementById('textInput').value.trim();
       if (!text) {
@@ -335,22 +375,6 @@
 
       var chunks = chunkTextByTarget(text, targetPages);
       var required = chunks.length;
-
-      // Calculate dynamic font size and line height to fit text comfortably
-      var avgChars = Math.max.apply(null, chunks.map(function(c) { return c.length; }));
-      var dynamicFontSize = 15;
-      var dynamicLineHeight = 24;
-
-      if (avgChars > 600) {
-        dynamicFontSize = 12;
-        dynamicLineHeight = 18;
-      } else if (avgChars > 450) {
-        dynamicFontSize = 13;
-        dynamicLineHeight = 20;
-      } else {
-        dynamicFontSize = 15;
-        dynamicLineHeight = 24;
-      }
 
       if (balance < required) {
         showToast('Need ' + required + ' Pages, Balance: ' + balance + '. Watch ad or recharge.');
@@ -369,7 +393,10 @@
 
         var titleBar = document.createElement('div');
         titleBar.className = 'page-title';
-        titleBar.innerHTML = '<span>Page ' + (i + 1) + ' of ' + required + '</span><button class="btn-page-jpg" onclick="downloadSinglePage(' + i + ')">Save Page ' + (i + 1) + ' JPG</button>';
+        titleBar.innerHTML = '<span>Page ' + (i + 1) + ' of ' + required + '</span><button class="btn-page-jpg" onclick="downloadSinglePage(' + i + ')">Save JPG</button>';
+
+        var viewport = document.createElement('div');
+        viewport.className = 'sheet-viewport';
 
         var sheet = document.createElement('div');
         sheet.className = 'a4-canvas-sheet ' + style;
@@ -379,51 +406,55 @@
         p.className = 'handwriting-text';
         p.style.fontFamily = font;
         p.style.color = ink;
-        p.style.fontSize = dynamicFontSize + 'px';
-        p.style.lineHeight = dynamicLineHeight + 'px';
-        p.innerText = chunks[i];
+        p.style.fontSize = '14.5px';
+        p.innerHTML = formatTextToNotesHTML(chunks[i]);
 
         sheet.appendChild(p);
+        viewport.appendChild(sheet);
         outer.appendChild(titleBar);
-        outer.appendChild(sheet);
+        outer.appendChild(viewport);
         wrap.appendChild(outer);
       }
 
       var outCard = document.getElementById('outputCard');
       outCard.style.display = 'block';
       outCard.scrollIntoView({ behavior: 'smooth' });
-      showToast('A4 Pages created successfully!');
+      showToast('A4 Assignment created!');
     }
 
-    // High-Resolution 2D Canvas Engine
+    // High Resolution Canvas Renderer with Topper Highlights & Ruled Margins
     function renderSheetToCanvas(sheetEl, callback) {
       var canvas = document.createElement('canvas');
       canvas.width = 794;  // Standard A4 width @ 96 DPI
       canvas.height = 1123; // Standard A4 height @ 96 DPI
       var ctx = canvas.getContext('2d');
 
-      ctx.fillStyle = '#fffdf5';
+      ctx.fillStyle = '#fbfbf4';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (sheetEl.classList.contains('ruled')) {
-        // Red Top Header Rule
+        // Red Top Double Header
         ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(0, 100);
-        ctx.lineTo(canvas.width, 100);
+        ctx.moveTo(0, 96);
+        ctx.lineTo(canvas.width, 96);
+        ctx.moveTo(0, 102);
+        ctx.lineTo(canvas.width, 102);
         ctx.stroke();
 
-        // Red Left Margin Rule
+        // Red Left Double Margin
         ctx.beginPath();
-        ctx.moveTo(80, 0);
-        ctx.lineTo(80, canvas.height);
+        ctx.moveTo(76, 0);
+        ctx.lineTo(76, canvas.height);
+        ctx.moveTo(82, 0);
+        ctx.lineTo(82, canvas.height);
         ctx.stroke();
 
-        // Blue/Purple Notebook Lines
-        ctx.strokeStyle = 'rgba(147, 197, 253, 0.65)';
+        // Blue / Cyan Notebook Ruling
+        ctx.strokeStyle = 'rgba(147, 197, 253, 0.55)';
         ctx.lineWidth = 1;
-        for (var y = 148; y < canvas.height - 40; y += 48) {
+        for (var y = 146; y < canvas.height - 40; y += 44) {
           ctx.beginPath();
           ctx.moveTo(0, y);
           ctx.lineTo(canvas.width, y);
@@ -432,41 +463,63 @@
       }
 
       var textNode = sheetEl.querySelector('.handwriting-text');
-      var text = textNode.innerText;
+      var rawLines = textNode.innerText.split('\n');
       var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Patrick Hand';
-      var fSize = parseInt(textNode.style.fontSize) * 2;
-      var lHeight = parseInt(textNode.style.lineHeight) * 2;
 
-      ctx.fillStyle = textNode.style.color || '#0d3b66';
-      ctx.font = fSize + 'px ' + fontName + ', sans-serif';
+      var startX = sheetEl.classList.contains('ruled') ? 96 : 50;
+      var startY = 138;
+      var lineHeight = 44;
+      var maxLineWidth = canvas.width - startX - 45;
 
-      var paragraphs = text.split('\n');
-      var startX = sheetEl.classList.contains('ruled') ? 100 : 60;
-      var startY = 140;
-      var maxLineWidth = canvas.width - startX - 50;
+      for (var i = 0; i < rawLines.length; i++) {
+        var lineText = rawLines[i].trim();
+        if (!lineText) {
+          startY += lineHeight;
+          continue;
+        }
 
-      for (var p = 0; p < paragraphs.length; p++) {
-        var words = paragraphs[p].split(' ');
-        var line = '';
+        ctx.font = '28px ' + fontName + ', sans-serif';
+
+        // Custom Highlight Boxes for Q/A and Headings
+        if (lineText.startsWith('Q.') || lineText.startsWith('Question:')) {
+          ctx.strokeStyle = '#ec4899';
+          ctx.lineWidth = 1.5;
+                    ctx.fillStyle = 'rgba(251, 207, 232, 0.35)';
+          var m = ctx.measureText(lineText);
+          ctx.strokeRect(startX - 4, startY - 26, m.width + 12, 34);
+          ctx.fillRect(startX - 4, startY - 26, m.width + 12, 34);
+          ctx.fillStyle = '#db2777';
+        } else if (lineText.startsWith('Answer:') || lineText.startsWith('Ans:')) {
+          ctx.fillStyle = '#2563eb';
+        } else if (lineText.endsWith(':') && lineText.length < 35) {
+          ctx.fillStyle = 'rgba(134, 239, 172, 0.6)';
+          var m = ctx.measureText(lineText);
+          ctx.fillRect(startX - 2, startY - 24, m.width + 8, 30);
+          ctx.fillStyle = '#065f46';
+        } else {
+          ctx.fillStyle = textNode.style.color || '#0d3b66';
+        }
+
+        var words = lineText.split(' ');
+        var subline = '';
         for (var n = 0; n < words.length; n++) {
-          var testLine = line + words[n] + ' ';
+          var testLine = subline + words[n] + ' ';
           var metrics = ctx.measureText(testLine);
           if (metrics.width > maxLineWidth && n > 0) {
-            ctx.fillText(line, startX, startY);
-            line = words[n] + ' ';
-            startY += lHeight;
+            ctx.fillText(subline, startX, startY);
+            subline = words[n] + ' ';
+            startY += lineHeight;
           } else {
-            line = testLine;
+            subline = testLine;
           }
         }
-        ctx.fillText(line, startX, startY);
-        startY += lHeight;
+        ctx.fillText(subline, startX, startY);
+        startY += lineHeight;
       }
 
       callback(canvas);
     }
 
-    // Direct Native Device Storage Writer
     async function saveBase64File(cleanBase64, filename) {
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
         try {
@@ -485,7 +538,6 @@
       return false;
     }
 
-    // Download Single Page as JPG
     async function downloadSinglePage(pageIndex) {
       var sheet = document.getElementById('sheet-node-' + pageIndex);
       if (!sheet) return;
@@ -498,7 +550,7 @@
 
         var saved = await saveBase64File(cleanBase64, fileName);
         if (saved) {
-          showToast('✅ Saved Page ' + (pageIndex + 1) + ' to Storage/Gallery!');
+          showToast('✅ Saved Page ' + (pageIndex + 1) + ' to Gallery/Storage!');
         } else {
           var a = document.createElement('a');
           a.download = fileName;
@@ -511,7 +563,6 @@
       });
     }
 
-    // Download All Pages as JPG
     async function downloadAllJPGs() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
@@ -542,7 +593,6 @@
       showToast('✅ All ' + sheets.length + ' JPG pages saved successfully!');
     }
 
-    // Direct Combined A4 Multi-Page PDF Exporter
     async function downloadCombinedPDF() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
