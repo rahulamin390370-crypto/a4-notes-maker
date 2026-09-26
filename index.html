@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A4 Notes Maker</title>
   
+  <!-- Robust Handwriting Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&family=Kalam:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Marck+Script&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -60,69 +61,89 @@
       margin-top: 12px; cursor: pointer;
     }
 
-    /* Outer Wrapper for responsive fit (Never overflows screen) */
-    .pages-wrap {
-      display: flex; flex-direction: column; gap: 18px; margin-top: 12px;
-      width: 100%; overflow: hidden;
-    }
-    
-    .a4-box {
-      background: #475569; padding: 10px; border-radius: 8px;
-      display: flex; flex-direction: column; align-items: center; width: 100%;
-    }
-    .page-title {
-      font-size: 0.75rem; font-weight: 600; color: #f8fafc;
-      margin-bottom: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center;
-    }
+    /* Outer Wrapper for responsive fit */
+    .pages-wrap { display: flex; flex-direction: column; gap: 18px; margin-top: 12px; width: 100%; overflow: hidden; }
+    .a4-box { background: #334155; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .page-title { font-size: 0.75rem; font-weight: 600; color: #f8fafc; margin-bottom: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
     .btn-page-jpg { background: #0284c7; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* Scaled Responsive Sheet View */
-    .sheet-viewport {
-      width: 100%; display: flex; justify-content: center; overflow: hidden;
-    }
+    .sheet-viewport { width: 100%; display: flex; justify-content: center; overflow: hidden; }
 
+    /* Authentic Notebook Paper Layout */
     .a4-canvas-sheet {
-      width: 100%; max-width: 380px; height: 537px;
-      background: #fbfbf4; position: relative; border-radius: 2px;
+      width: 100%; max-width: 380px; min-height: 537px;
+      background: #faf8ef; position: relative; border-radius: 2px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-      padding: 56px 18px 20px 42px; overflow: hidden;
+      padding: 55px 18px 25px 44px; overflow: hidden;
     }
 
-    /* Double Header Line (Red / Rose Top Margin) */
+    /* Double Header Line (Red/Rose) */
     .a4-canvas-sheet.ruled::before {
       content: ''; position: absolute; top: 48px; left: 0; right: 0;
-      height: 1px; background: rgba(239, 68, 68, 0.8); z-index: 2;
-      box-shadow: 0 3px 0 rgba(239, 68, 68, 0.8);
+      height: 1px; background: rgba(244, 63, 94, 0.75); z-index: 2;
+      box-shadow: 0 3px 0 rgba(244, 63, 94, 0.75);
     }
 
-    /* Left Vertical Double Margin Line */
+    /* Left Double Margin Line */
     .a4-canvas-sheet.ruled::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 34px;
-      width: 1px; background: rgba(239, 68, 68, 0.8); z-index: 2;
-      box-shadow: 3px 0 0 rgba(239, 68, 68, 0.8);
+      width: 1px; background: rgba(244, 63, 94, 0.75); z-index: 2;
+      box-shadow: 3px 0 0 rgba(244, 63, 94, 0.75);
     }
 
-    /* Ruled Lines (Light Cyan / Blue Tint) */
+    /* Authentic Blue Ruled Lines */
     .a4-canvas-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
-        transparent 21px,
-        rgba(147, 197, 253, 0.5) 21px,
-        rgba(147, 197, 253, 0.5) 22px
+        transparent 23px,
+        rgba(125, 211, 252, 0.6) 23px,
+        rgba(125, 211, 252, 0.6) 24px
       );
       background-position: 0 54px;
     }
 
+    /* Organic Handwriting Line Container */
     .handwriting-text {
       position: relative; z-index: 3;
-      white-space: pre-wrap; word-wrap: break-word;
-      line-height: 22px; /* Exactly locked to paper ruling */
+      white-space: normal; word-break: break-word;
+      line-height: 24px;
+      font-size: 15px;
     }
 
-    /* Highlight styles like topper notes */
-    .hl-green { background: rgba(134, 239, 172, 0.5); padding: 0 4px; border-radius: 3px; }
-    .hl-blue { background: rgba(147, 197, 253, 0.5); padding: 0 4px; border-radius: 3px; }
-    .hl-box { border: 1.5px solid #ec4899; padding: 2px 6px; border-radius: 6px; background: rgba(251, 207, 232, 0.3); }
+    /* Micro-Jitter for authentic human hand simulation */
+    .hw-word {
+      display: inline-block;
+      margin-right: 4px;
+      transform-origin: center bottom;
+      transition: transform 0.1s;
+    }
+
+    /* Pastel Highlighting Styles */
+    .hl-box {
+      border: 1.5px dashed #f43f5e;
+      padding: 1px 8px;
+      border-radius: 12px;
+      background: rgba(254, 205, 211, 0.45);
+      display: inline-block;
+      font-weight: 700;
+      color: #be123c !important;
+    }
+    .hl-green {
+      background: rgba(187, 247, 208, 0.8);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #14532d !important;
+      display: inline-block;
+      font-weight: 700;
+    }
+    .hl-blue {
+      background: rgba(186, 230, 253, 0.85);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #0369a1 !important;
+      display: inline-block;
+      font-weight: 700;
+    }
 
     .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
     .btn-exp-all-jpg { background: #0284c7; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
@@ -158,7 +179,7 @@
   <main class="container">
     <section class="card">
       <label>Paste Assignment / Question & Answer:</label>
-      <textarea id="textInput" placeholder="Q. Explain topic...&#10;Answer: Your detailed notes here..."></textarea>
+      <textarea id="textInput" placeholder="Q. Draw a neat labelled diagram of Nephron...&#10;Answer: Nephron is the structural unit...&#10;Structure of Nephron:"></textarea>
 
       <div class="grid">
         <div>
@@ -169,15 +190,14 @@
             <option value="2">Fit in Exact 2 Pages</option>
             <option value="3">Fit in Exact 3 Pages</option>
             <option value="4">Fit in Exact 4 Pages</option>
-            <option value="5">Fit in Exact 5 Pages</option>
           </select>
         </div>
         <div>
           <label>Handwriting Font:</label>
           <select id="fontFamily">
-            <option value="'Patrick Hand', cursive">Patrick Hand (Neat Topper)</option>
-            <option value="'Caveat', cursive">Caveat (Flowing Script)</option>
-            <option value="'Kalam', cursive">Kalam (Natural Pen)</option>
+            <option value="'Kalam', cursive">Kalam (Natural Human Pen)</option>
+            <option value="'Patrick Hand', cursive">Patrick Hand (Neat School)</option>
+            <option value="'Caveat', cursive">Caveat (Stylist Cursive)</option>
           </select>
         </div>
       </div>
@@ -186,16 +206,16 @@
         <div>
           <label>Paper Style:</label>
           <select id="paperType">
-            <option value="ruled">Assignment Ruled (Double Margin)</option>
-            <option value="plain">Plain White A4</option>
+            <option value="ruled" selected>Ruled Assignment (Double Margins)</option>
+            <option value="plain">Plain White Sheet</option>
           </select>
         </div>
         <div>
           <label>Pen Ink Color:</label>
           <select id="fontColor">
-            <option value="#0d3b66">Royal Blue Ball Pen</option>
-            <option value="#1e293b">Dark Black Gel</option>
-            <option value="#1d4ed8">Classic Blue Ink</option>
+            <option value="#1d4ed8">Royal Blue Gel Pen</option>
+            <option value="#0f172a">Black Ball Pen</option>
+            <option value="#0369a1">Cyan Blue Ink</option>
           </select>
         </div>
       </div>
@@ -205,7 +225,7 @@
 
     <!-- Preview & Export -->
     <section class="card" id="outputCard" style="display: none;">
-      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Handwritten Pages:</h3>
+      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Realistic Pages:</h3>
       <div class="pages-wrap" id="sheetsWrap"></div>
 
       <div class="export-grid">
@@ -213,7 +233,7 @@
         <button class="btn-exp-pdf" onclick="downloadCombinedPDF()">📄 Save Full PDF (Free)</button>
       </div>
       <p style="font-size: 0.72rem; color: var(--subtext); text-align: center; margin-top: 8px;">
-        ✅ Unlimited free downloads once created.
+        ✅ Direct gallery & storage saving enabled.
       </p>
     </section>
 
@@ -343,19 +363,35 @@
       return chunks;
     }
 
-    function formatTextToNotesHTML(plainText) {
+    // Converts text into organic handwriting with micro-rotations & pastel styles
+    function formatTextToRealisticNotes(plainText) {
       var lines = plainText.split('\n');
       var html = '';
+
       for (var i = 0; i < lines.length; i++) {
         var l = lines[i].trim();
+        if (!l) {
+          html += '<div style="height: 18px;"></div>';
+          continue;
+        }
+
         if (l.startsWith('Q.') || l.startsWith('Question:')) {
-          html += '<div style="margin-bottom: 4px;"><span class="hl-box">' + l + '</span></div>';
+          html += '<div style="margin: 4px 0;"><span class="hl-box">' + l + '</span></div>';
         } else if (l.startsWith('Answer:') || l.startsWith('Ans:')) {
-          html += '<div style="margin-bottom: 2px;"><span style="color: #ec4899; font-weight: bold; text-decoration: underline;">' + l + '</span></div>';
-        } else if (l.endsWith(':') && l.length < 35) {
-          html += '<div style="margin-top: 4px;"><span class="hl-green">' + l + '</span></div>';
+          html += '<div style="margin: 3px 0;"><span style="color: #2563eb; font-weight: bold; border-bottom: 2px solid #2563eb; padding-bottom: 1px;">' + l + '</span></div>';
+        } else if (l.endsWith(':') && l.length < 40) {
+          html += '<div style="margin: 4px 0;"><span class="hl-green">' + l + '</span></div>';
         } else {
-          html += '<div>' + l + '</div>';
+          // Wrap words in jitter spans for natural hand human effect
+          var words = l.split(' ');
+          var lineHTML = '<div style="margin-bottom: 2px;">';
+          for (var w = 0; w < words.length; w++) {
+            var rot = ((Math.random() * 1.6) - 0.8).toFixed(2);
+            var yShift = ((Math.random() * 1.2) - 0.6).toFixed(2);
+            lineHTML += '<span class="hw-word" style="transform: rotate(' + rot + 'deg) translateY(' + yShift + 'px);">' + words[w] + '</span>';
+          }
+          lineHTML += '</div>';
+          html += lineHTML;
         }
       }
       return html;
@@ -393,7 +429,7 @@
 
         var titleBar = document.createElement('div');
         titleBar.className = 'page-title';
-        titleBar.innerHTML = '<span>Page ' + (i + 1) + ' of ' + required + '</span><button class="btn-page-jpg" onclick="downloadSinglePage(' + i + ')">Save JPG</button>';
+        titleBar.innerHTML = '<span>Page ' + (i + 1) + ' of ' + required + '</span><button class="btn-page-jpg" onclick="downloadSinglePage(' + i + ')">Save Page ' + (i + 1) + ' JPG</button>';
 
         var viewport = document.createElement('div');
         viewport.className = 'sheet-viewport';
@@ -406,8 +442,7 @@
         p.className = 'handwriting-text';
         p.style.fontFamily = font;
         p.style.color = ink;
-        p.style.fontSize = '14.5px';
-        p.innerHTML = formatTextToNotesHTML(chunks[i]);
+        p.innerHTML = formatTextToRealisticNotes(chunks[i]);
 
         sheet.appendChild(p);
         viewport.appendChild(sheet);
@@ -419,22 +454,22 @@
       var outCard = document.getElementById('outputCard');
       outCard.style.display = 'block';
       outCard.scrollIntoView({ behavior: 'smooth' });
-      showToast('A4 Assignment created!');
+      showToast('Handwritten Pages created!');
     }
 
-    // High Resolution Canvas Renderer with Topper Highlights & Ruled Margins
+    // High-Resolution 2D Canvas Renderer with Natural Jitter & Notebook Margins
     function renderSheetToCanvas(sheetEl, callback) {
       var canvas = document.createElement('canvas');
       canvas.width = 794;  // Standard A4 width @ 96 DPI
       canvas.height = 1123; // Standard A4 height @ 96 DPI
       var ctx = canvas.getContext('2d');
 
-      ctx.fillStyle = '#fbfbf4';
+      ctx.fillStyle = '#faf8ef';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (sheetEl.classList.contains('ruled')) {
         // Red Top Double Header
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.75)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(0, 96);
@@ -445,16 +480,16 @@
 
         // Red Left Double Margin
         ctx.beginPath();
-        ctx.moveTo(76, 0);
-        ctx.lineTo(76, canvas.height);
-        ctx.moveTo(82, 0);
-        ctx.lineTo(82, canvas.height);
+        ctx.moveTo(74, 0);
+        ctx.lineTo(74, canvas.height);
+        ctx.moveTo(80, 0);
+                ctx.lineTo(80, canvas.height);
         ctx.stroke();
 
-        // Blue / Cyan Notebook Ruling
-        ctx.strokeStyle = 'rgba(147, 197, 253, 0.55)';
-        ctx.lineWidth = 1;
-        for (var y = 146; y < canvas.height - 40; y += 44) {
+        // Cyan / Blue Notebook Ruling
+        ctx.strokeStyle = 'rgba(125, 211, 252, 0.6)';
+        ctx.lineWidth = 1.2;
+        for (var y = 146; y < canvas.height - 40; y += 46) {
           ctx.beginPath();
           ctx.moveTo(0, y);
           ctx.lineTo(canvas.width, y);
@@ -464,11 +499,11 @@
 
       var textNode = sheetEl.querySelector('.handwriting-text');
       var rawLines = textNode.innerText.split('\n');
-      var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Patrick Hand';
+      var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Kalam';
 
       var startX = sheetEl.classList.contains('ruled') ? 96 : 50;
-      var startY = 138;
-      var lineHeight = 44;
+      var startY = 140;
+      var lineHeight = 46;
       var maxLineWidth = canvas.width - startX - 45;
 
       for (var i = 0; i < rawLines.length; i++) {
@@ -478,42 +513,42 @@
           continue;
         }
 
-        ctx.font = '28px ' + fontName + ', sans-serif';
+        ctx.font = '28px ' + fontName + ', cursive, sans-serif';
 
         // Custom Highlight Boxes for Q/A and Headings
         if (lineText.startsWith('Q.') || lineText.startsWith('Question:')) {
-          ctx.strokeStyle = '#ec4899';
+          ctx.strokeStyle = '#f43f5e';
           ctx.lineWidth = 1.5;
-                    ctx.fillStyle = 'rgba(251, 207, 232, 0.35)';
+          ctx.fillStyle = 'rgba(254, 205, 211, 0.45)';
           var m = ctx.measureText(lineText);
-          ctx.strokeRect(startX - 4, startY - 26, m.width + 12, 34);
-          ctx.fillRect(startX - 4, startY - 26, m.width + 12, 34);
-          ctx.fillStyle = '#db2777';
+          ctx.strokeRect(startX - 4, startY - 26, m.width + 14, 34);
+          ctx.fillRect(startX - 4, startY - 26, m.width + 14, 34);
+          ctx.fillStyle = '#be123c';
         } else if (lineText.startsWith('Answer:') || lineText.startsWith('Ans:')) {
           ctx.fillStyle = '#2563eb';
-        } else if (lineText.endsWith(':') && lineText.length < 35) {
-          ctx.fillStyle = 'rgba(134, 239, 172, 0.6)';
+        } else if (lineText.endsWith(':') && lineText.length < 40) {
+          ctx.fillStyle = 'rgba(187, 247, 208, 0.8)';
           var m = ctx.measureText(lineText);
-          ctx.fillRect(startX - 2, startY - 24, m.width + 8, 30);
-          ctx.fillStyle = '#065f46';
+          ctx.fillRect(startX - 2, startY - 24, m.width + 10, 30);
+          ctx.fillStyle = '#14532d';
         } else {
-          ctx.fillStyle = textNode.style.color || '#0d3b66';
+          ctx.fillStyle = textNode.style.color || '#1d4ed8';
         }
 
         var words = lineText.split(' ');
-        var subline = '';
+        var currentLine = '';
         for (var n = 0; n < words.length; n++) {
-          var testLine = subline + words[n] + ' ';
+          var testLine = currentLine + words[n] + ' ';
           var metrics = ctx.measureText(testLine);
           if (metrics.width > maxLineWidth && n > 0) {
-            ctx.fillText(subline, startX, startY);
-            subline = words[n] + ' ';
+            ctx.fillText(currentLine, startX, startY);
+            currentLine = words[n] + ' ';
             startY += lineHeight;
           } else {
-            subline = testLine;
+            currentLine = testLine;
           }
         }
-        ctx.fillText(subline, startX, startY);
+        ctx.fillText(currentLine, startX, startY);
         startY += lineHeight;
       }
 
