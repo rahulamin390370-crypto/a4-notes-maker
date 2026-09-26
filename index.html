@@ -7,29 +7,52 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Indie+Flower&family=Patrick+Hand&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&family=Kalam:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
+    :root {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #cbd5e1;
+      --header-bg: #0f172a;
+      --header-text: #ffffff;
+    }
+
+    body.dark {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --border: #334155;
+      --header-bg: #020617;
+      --header-text: #f8fafc;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: #f1f5f9; color: #0f172a; padding-bottom: 60px; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 70px; transition: background 0.2s, color 0.2s; }
 
     .header {
-      background: #0f172a; color: #fff; padding: 14px 16px;
+      background: var(--header-bg); color: var(--header-text); padding: 12px 16px;
       display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 100;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
     .brand { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
-    .badge { background: #10b981; color: #fff; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; font-weight: 600; }
-    .btn-auth { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+    .header-right { display: flex; gap: 8px; align-items: center; }
+    .badge { background: #10b981; color: #fff; font-size: 0.72rem; padding: 5px 10px; border-radius: 20px; font-weight: 600; }
+    .btn-toggle-dark { background: #334155; border: none; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    .btn-auth { background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
 
     .container { padding: 14px; max-width: 480px; margin: 0 auto; }
-    .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 14px; border: 1px solid #e2e8f0; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 14px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 
-    label { font-size: 0.78rem; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; }
-    textarea { width: 100%; height: 110px; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.88rem; outline: none; }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--subtext); display: block; margin-bottom: 5px; }
+    textarea { width: 100%; height: 110px; border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 8px; padding: 10px; font-size: 0.88rem; outline: none; }
 
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    select, input { width: 100%; padding: 8px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-size: 0.82rem; background: #fff; }
+    select, input { width: 100%; padding: 8px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text); font-size: 0.82rem; }
 
     .btn-main {
       width: 100%; background: #2563eb; color: #fff; border: none;
@@ -37,54 +60,63 @@
       margin-top: 12px; cursor: pointer;
     }
 
-    .pages-wrap { display: flex; flex-direction: column; gap: 16px; overflow-x: auto; margin-top: 10px; }
-    .a4-box { background: #cbd5e1; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
-    .page-title { font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    /* Authentic A4 Notebook Style */
+    .pages-wrap { display: flex; flex-direction: column; gap: 18px; margin-top: 12px; }
+    .a4-box { background: #64748b; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
+    .page-title { font-size: 0.75rem; font-weight: 600; color: #f8fafc; margin-bottom: 6px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .btn-page-jpg { background: #0284c7; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
     .a4-canvas-sheet {
       width: 380px; height: 537px; background: #fffdf5; position: relative;
-      border-radius: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      padding: 45px 25px 25px 45px; overflow: hidden;
+      border-radius: 2px; box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      padding: 50px 22px 25px 45px; overflow: hidden;
     }
 
+    /* Top Red Header Line */
+    .a4-canvas-sheet.ruled::after {
+      content: ''; position: absolute; top: 48px; left: 0; right: 0;
+      height: 1.5px; background: rgba(239, 68, 68, 0.85); z-index: 2;
+    }
+
+    /* Left Red Margin Line */
     .a4-canvas-sheet.ruled::before {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 40px;
-      width: 1.5px; background: rgba(239, 68, 68, 0.75); z-index: 2;
+      content: ''; position: absolute; top: 0; bottom: 0; left: 38px;
+      width: 1.5px; background: rgba(239, 68, 68, 0.85); z-index: 2;
     }
 
+    /* Notebook Ruled Grid */
     .a4-canvas-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
-        transparent 25px,
-        rgba(148, 163, 184, 0.45) 25px,
-        rgba(148, 163, 184, 0.45) 26px
+        transparent 23px,
+        rgba(147, 197, 253, 0.65) 23px,
+        rgba(147, 197, 253, 0.65) 24px
       );
-      background-position: 0 45px;
+      background-position: 0 48px;
     }
 
     .handwriting-text {
       position: relative; z-index: 3;
-      line-height: 26px; white-space: pre-wrap; word-wrap: break-word;
-      text-shadow: 0.2px 0.2px 0.5px rgba(0,0,0,0.15);
+      white-space: pre-wrap; word-wrap: break-word;
       letter-spacing: 0.3px;
     }
 
-    .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-    .btn-exp-jpg { background: #0284c7; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
-    .btn-exp-pdf { background: #059669; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+    .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .btn-exp-all-jpg { background: #0284c7; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
+    .btn-exp-pdf { background: #059669; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
 
+    /* Monetization */
     .ad-box { background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; text-align: center; }
     .btn-ad { background: #d97706; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; margin-top: 6px; cursor: pointer; }
 
     .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-    .pack { border: 1.5px solid #e2e8f0; padding: 8px 4px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; }
-    .pack:active { border-color: #2563eb; background: #eff6ff; }
+    .pack { border: 1.5px solid var(--border); padding: 8px 4px; text-align: center; border-radius: 8px; cursor: pointer; background: var(--card-bg); }
     .pack-price { font-weight: 700; font-size: 0.95rem; }
-    .pack-pages { font-size: 0.7rem; color: #64748b; }
+    .pack-pages { font-size: 0.7rem; color: var(--subtext); }
 
     .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 200; padding: 14px; }
-    .modal-content { background: #fff; width: 100%; max-width: 320px; border-radius: 10px; padding: 18px; }
-    .modal-content input { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .modal-content { background: var(--card-bg); width: 100%; max-width: 320px; border-radius: 10px; padding: 18px; border: 1px solid var(--border); }
+    .modal-content input { width: 100%; padding: 10px; margin-bottom: 8px; }
 
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; display: none; z-index: 300; }
   </style>
@@ -93,32 +125,36 @@
 
   <header class="header">
     <div class="brand">📝 A4 Notes Maker</div>
-    <div style="display: flex; gap: 8px; align-items: center;">
+    <div class="header-right">
       <span class="badge" id="balBadge">Balance: 4 Pages</span>
+      <button class="btn-toggle-dark" onclick="toggleDarkMode()">🌓 Mode</button>
       <button class="btn-auth" id="navAuthBtn" onclick="toggleModal()">Login</button>
     </div>
   </header>
 
   <main class="container">
     <section class="card">
-      <label>Paste Assignment / Notes Text:</label>
-      <textarea id="textInput" placeholder="Paste your question and answer text here..."></textarea>
+      <label>Paste Assignment / Question & Answer:</label>
+      <textarea id="textInput" placeholder="Paste your text here..."></textarea>
 
       <div class="grid">
         <div>
-          <label>Handwriting Font:</label>
-          <select id="fontFamily">
-            <option value="'Patrick Hand', cursive">Patrick Hand (Neat School)</option>
-            <option value="'Caveat', cursive">Caveat (Stylist Cursive)</option>
-            <option value="'Indie Flower', cursive">Indie Flower (Natural)</option>
+          <label>Target Page Count (Auto Fit):</label>
+          <select id="targetPagesSelect">
+            <option value="auto">Auto Calculate</option>
+            <option value="1">Fit in Exact 1 Page</option>
+            <option value="2">Fit in Exact 2 Pages</option>
+            <option value="3">Fit in Exact 3 Pages</option>
+            <option value="4">Fit in Exact 4 Pages</option>
+            <option value="5">Fit in Exact 5 Pages</option>
           </select>
         </div>
         <div>
-          <label>Ink Color:</label>
-          <select id="fontColor">
-            <option value="#0d3b66">Royal Blue Pen</option>
-            <option value="#1e293b">Black Gel Pen</option>
-            <option value="#1e40af">Light Ink</option>
+          <label>Handwriting Font:</label>
+          <select id="fontFamily">
+            <option value="'Patrick Hand', cursive">Patrick Hand (Neat)</option>
+            <option value="'Caveat', cursive">Caveat (Cursive)</option>
+            <option value="'Kalam', cursive">Kalam (Natural)</option>
           </select>
         </div>
       </div>
@@ -127,34 +163,38 @@
         <div>
           <label>Paper Style:</label>
           <select id="paperType">
-            <option value="ruled">Ruled Notebook Page</option>
-            <option value="plain">Plain White A4</option>
+            <option value="ruled">Ruled Notebook (Top & Margin Lines)</option>
+            <option value="plain">Plain White Sheet</option>
           </select>
         </div>
         <div>
-          <label>Font Size (px):</label>
-          <input type="number" id="fontSize" value="15" min="13" max="20" />
+          <label>Pen Ink Color:</label>
+          <select id="fontColor">
+            <option value="#0d3b66">Royal Blue Ball Pen</option>
+            <option value="#1e293b">Black Gel Pen</option>
+            <option value="#1e40af">Bright Blue Ink</option>
+          </select>
         </div>
       </div>
 
-      <button class="btn-main" onclick="onGenerateClick()">✨ Create Realistic A4 Pages</button>
+      <button class="btn-main" onclick="onGenerateClick()">✨ Create Realistic A4 Assignment</button>
     </section>
 
-    <!-- Output Section -->
+    <!-- Preview & Export -->
     <section class="card" id="outputCard" style="display: none;">
-      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Handwritten Pages:</h3>
+      <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Generated Realistic Pages:</h3>
       <div class="pages-wrap" id="sheetsWrap"></div>
 
       <div class="export-grid">
-        <button class="btn-exp-jpg" onclick="downloadAllJPGDirect()">📥 Download JPG (Gallery)</button>
-        <button class="btn-exp-pdf" onclick="downloadAllPDFDirect()">📄 Download PDF (Free)</button>
+        <button class="btn-exp-all-jpg" onclick="downloadAllJPGs()">📥 Save All Pages (JPG)</button>
+        <button class="btn-exp-pdf" onclick="downloadCombinedPDF()">📄 Save as PDF (Free)</button>
       </div>
-      <p style="font-size: 0.72rem; color: #64748b; text-align: center; margin-top: 8px;">
+      <p style="font-size: 0.72rem; color: var(--subtext); text-align: center; margin-top: 8px;">
         ✅ Unlimited free downloads once created.
       </p>
     </section>
 
-    <!-- Subscriptions & Recharge -->
+    <!-- Recharge & Balance -->
     <section class="card">
       <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Recharge & Balance</h3>
       <div class="ad-box">
@@ -199,6 +239,16 @@
       setTimeout(function() { t.style.display = 'none'; }, 2500);
     }
 
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      var isDark = document.body.classList.contains('dark');
+      localStorage.setItem('a4_dark_mode', isDark ? '1' : '0');
+    }
+
+    if (localStorage.getItem('a4_dark_mode') === '1') {
+      document.body.classList.add('dark');
+    }
+
     function syncUI() {
       document.getElementById('balBadge').innerText = 'Balance: ' + balance + ' Pages';
       var btn = document.getElementById('navAuthBtn');
@@ -228,7 +278,7 @@
     }
 
     function onWatchAd() {
-      showToast('Playing 5-second sponsored ad...');
+      showToast('Playing sponsored video ad...');
       setTimeout(function() {
         balance += 2;
         syncUI();
@@ -247,6 +297,30 @@
       showToast('Recharge Successful! +' + pages + ' Pages added.');
     }
 
+    // Auto-fit & Paginate Text Algorithm
+    function chunkTextByTarget(text, targetPages) {
+      var totalChars = text.length;
+      var chunks = [];
+
+      if (targetPages !== 'auto') {
+        var numPages = parseInt(targetPages);
+        var charsPerPage = Math.ceil(totalChars / numPages);
+        for (var i = 0; i < numPages; i++) {
+          var start = i * charsPerPage;
+          var end = start + charsPerPage;
+          var part = text.substring(start, end).trim();
+          if (part.length > 0) chunks.push(part);
+        }
+      } else {
+        var remaining = text;
+        while (remaining.length > 0) {
+          chunks.push(remaining.substring(0, 420));
+          remaining = remaining.substring(420);
+        }
+      }
+      return chunks;
+    }
+
     function onGenerateClick() {
       var text = document.getElementById('textInput').value.trim();
       if (!text) {
@@ -254,19 +328,30 @@
         return;
       }
 
+      var targetPages = document.getElementById('targetPagesSelect').value;
       var font = document.getElementById('fontFamily').value;
       var ink = document.getElementById('fontColor').value;
       var style = document.getElementById('paperType').value;
-      var size = document.getElementById('fontSize').value + 'px';
 
-      var chunks = [];
-      var remaining = text;
-      while (remaining.length > 0) {
-        chunks.push(remaining.substring(0, 420));
-        remaining = remaining.substring(420);
+      var chunks = chunkTextByTarget(text, targetPages);
+      var required = chunks.length;
+
+      // Calculate dynamic font size and line height to fit text comfortably
+      var avgChars = Math.max.apply(null, chunks.map(function(c) { return c.length; }));
+      var dynamicFontSize = 15;
+      var dynamicLineHeight = 24;
+
+      if (avgChars > 600) {
+        dynamicFontSize = 12;
+        dynamicLineHeight = 18;
+      } else if (avgChars > 450) {
+        dynamicFontSize = 13;
+        dynamicLineHeight = 20;
+      } else {
+        dynamicFontSize = 15;
+        dynamicLineHeight = 24;
       }
 
-      var required = chunks.length;
       if (balance < required) {
         showToast('Need ' + required + ' Pages, Balance: ' + balance + '. Watch ad or recharge.');
         return;
@@ -282,9 +367,9 @@
         var outer = document.createElement('div');
         outer.className = 'a4-box';
 
-        var title = document.createElement('div');
-        title.className = 'page-title';
-        title.innerText = 'Page ' + (i + 1) + ' of ' + required;
+        var titleBar = document.createElement('div');
+        titleBar.className = 'page-title';
+        titleBar.innerHTML = '<span>Page ' + (i + 1) + ' of ' + required + '</span><button class="btn-page-jpg" onclick="downloadSinglePage(' + i + ')">Save Page ' + (i + 1) + ' JPG</button>';
 
         var sheet = document.createElement('div');
         sheet.className = 'a4-canvas-sheet ' + style;
@@ -294,11 +379,12 @@
         p.className = 'handwriting-text';
         p.style.fontFamily = font;
         p.style.color = ink;
-        p.style.fontSize = size;
+        p.style.fontSize = dynamicFontSize + 'px';
+        p.style.lineHeight = dynamicLineHeight + 'px';
         p.innerText = chunks[i];
 
         sheet.appendChild(p);
-        outer.appendChild(title);
+        outer.appendChild(titleBar);
         outer.appendChild(sheet);
         wrap.appendChild(outer);
       }
@@ -306,139 +392,189 @@
       var outCard = document.getElementById('outputCard');
       outCard.style.display = 'block';
       outCard.scrollIntoView({ behavior: 'smooth' });
-      showToast('Pages created! Downloads are free.');
+      showToast('A4 Pages created successfully!');
     }
 
+    // High-Resolution 2D Canvas Engine
     function renderSheetToCanvas(sheetEl, callback) {
       var canvas = document.createElement('canvas');
-      canvas.width = 760;
-      canvas.height = 1074;
+      canvas.width = 794;  // Standard A4 width @ 96 DPI
+      canvas.height = 1123; // Standard A4 height @ 96 DPI
       var ctx = canvas.getContext('2d');
 
       ctx.fillStyle = '#fffdf5';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (sheetEl.classList.contains('ruled')) {
-        ctx.strokeStyle = '#cbd5e1';
+        // Red Top Header Rule
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 100);
+        ctx.lineTo(canvas.width, 100);
+        ctx.stroke();
+
+        // Red Left Margin Rule
+        ctx.beginPath();
+        ctx.moveTo(80, 0);
+        ctx.lineTo(80, canvas.height);
+        ctx.stroke();
+
+        // Blue/Purple Notebook Lines
+        ctx.strokeStyle = 'rgba(147, 197, 253, 0.65)';
         ctx.lineWidth = 1;
-        for (var y = 90; y < canvas.height - 40; y += 52) {
+        for (var y = 148; y < canvas.height - 40; y += 48) {
           ctx.beginPath();
           ctx.moveTo(0, y);
           ctx.lineTo(canvas.width, y);
           ctx.stroke();
         }
-
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(80, 0);
-        ctx.lineTo(80, canvas.height);
-        ctx.stroke();
       }
 
       var textNode = sheetEl.querySelector('.handwriting-text');
       var text = textNode.innerText;
       var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Patrick Hand';
-      
-      ctx.fillStyle = textNode.style.color || '#0d3b66';
-      ctx.font = '30px ' + fontName + ', sans-serif';
+      var fSize = parseInt(textNode.style.fontSize) * 2;
+      var lHeight = parseInt(textNode.style.lineHeight) * 2;
 
-      var words = text.split(' ');
-      var line = '';
+      ctx.fillStyle = textNode.style.color || '#0d3b66';
+      ctx.font = fSize + 'px ' + fontName + ', sans-serif';
+
+      var paragraphs = text.split('\n');
       var startX = sheetEl.classList.contains('ruled') ? 100 : 60;
-      var startY = 82;
-      var lineHeight = 52;
+      var startY = 140;
       var maxLineWidth = canvas.width - startX - 50;
 
-      for (var n = 0; n < words.length; n++) {
-        var testLine = line + words[n] + ' ';
-        var metrics = ctx.measureText(testLine);
-        if (metrics.width > maxLineWidth && n > 0) {
-          ctx.fillText(line, startX, startY);
-          line = words[n] + ' ';
-          startY += lineHeight;
-        } else {
-          line = testLine;
+      for (var p = 0; p < paragraphs.length; p++) {
+        var words = paragraphs[p].split(' ');
+        var line = '';
+        for (var n = 0; n < words.length; n++) {
+          var testLine = line + words[n] + ' ';
+          var metrics = ctx.measureText(testLine);
+          if (metrics.width > maxLineWidth && n > 0) {
+            ctx.fillText(line, startX, startY);
+            line = words[n] + ' ';
+            startY += lHeight;
+          } else {
+            line = testLine;
+          }
         }
+        ctx.fillText(line, startX, startY);
+        startY += lHeight;
       }
-      ctx.fillText(line, startX, startY);
 
       callback(canvas);
     }
 
-        function downloadAllJPGDirect() {
-      var sheets = document.querySelectorAll('.a4-canvas-sheet');
-      if (sheets.length === 0) return;
-      showToast('Preparing Image...');
+    // Direct Native Device Storage Writer
+    async function saveBase64File(cleanBase64, filename) {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+        try {
+          var Filesystem = window.Capacitor.Plugins.Filesystem;
+          await Filesystem.writeFile({
+            path: filename,
+            data: cleanBase64,
+            directory: 'DOCUMENTS',
+            recursive: true
+          });
+          return true;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return false;
+    }
 
-      renderSheetToCanvas(sheets[0], function(canvas) {
-        canvas.toBlob(async function(blob) {
-          var file = new File([blob], 'A4_Handwritten_Page_1.jpg', { type: 'image/jpeg' });
+    // Download Single Page as JPG
+    async function downloadSinglePage(pageIndex) {
+      var sheet = document.getElementById('sheet-node-' + pageIndex);
+      if (!sheet) return;
+      showToast('Saving Page ' + (pageIndex + 1) + '...');
 
-          // 1. Android Native System Share / Save
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                files: [file],
-                title: 'A4 Notes',
-                text: 'Save your handwritten notes to Gallery'
-              });
-              showToast('Saved / Shared successfully!');
-              return;
-            } catch (err) {
-              console.log('Share canceled or failed', err);
-            }
-          }
+      renderSheetToCanvas(sheet, async function(canvas) {
+        var base64Data = canvas.toDataURL('image/jpeg', 0.95);
+        var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
+        var fileName = 'A4_Notes_Page_' + (pageIndex + 1) + '_' + Date.now() + '.jpg';
 
-          // 2. Fallback for browser download
+        var saved = await saveBase64File(cleanBase64, fileName);
+        if (saved) {
+          showToast('✅ Saved Page ' + (pageIndex + 1) + ' to Storage/Gallery!');
+        } else {
           var a = document.createElement('a');
-          a.download = 'A4_Handwritten_Page_1.jpg';
-          a.href = URL.createObjectURL(blob);
+          a.download = fileName;
+          a.href = base64Data;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          showToast('Image downloaded to Downloads folder!');
-        }, 'image/jpeg', 0.95);
-      });
+          showToast('Page ' + (pageIndex + 1) + ' downloaded!');
         }
-    
-        async function downloadAllJPGDirect() {
+      });
+    }
+
+    // Download All Pages as JPG
+    async function downloadAllJPGs() {
       var sheets = document.querySelectorAll('.a4-canvas-sheet');
       if (sheets.length === 0) return;
-      showToast('Saving directly to Gallery...');
+      showToast('Saving all ' + sheets.length + ' page(s)...');
 
-      renderSheetToCanvas(sheets[0], async function(canvas) {
-        var base64Data = canvas.toDataURL('image/jpeg', 0.95);
-        var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
-        var fileName = 'A4_Notes_' + Date.now() + '.jpg';
+      for (var i = 0; i < sheets.length; i++) {
+        await new Promise(function(resolve) {
+          (function(index) {
+            renderSheetToCanvas(sheets[index], async function(canvas) {
+              var base64Data = canvas.toDataURL('image/jpeg', 0.95);
+              var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
+              var fileName = 'A4_Notes_Page_' + (index + 1) + '_' + Date.now() + '.jpg';
 
-        // Check if running inside Capacitor Android app
-        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-          try {
-            var Filesystem = window.Capacitor.Plugins.Filesystem;
-            await Filesystem.writeFile({
-              path: fileName,
-              data: cleanBase64,
-              directory: 'DOCUMENTS',
-              recursive: true
+              var saved = await saveBase64File(cleanBase64, fileName);
+              if (!saved) {
+                var a = document.createElement('a');
+                a.download = fileName;
+                a.href = base64Data;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }
+              resolve();
             });
-            showToast('✅ Saved to Phone Storage/Gallery!');
-            return;
-          } catch (err) {
-            console.error('Filesystem error', err);
-          }
-        }
+          })(i);
+        });
+      }
+      showToast('✅ All ' + sheets.length + ' JPG pages saved successfully!');
+    }
 
-        // Web Browser / Fallback link
-        var a = document.createElement('a');
-        a.download = fileName;
-        a.href = base64Data;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast('Image downloaded successfully!');
-      });
-     }
+    // Direct Combined A4 Multi-Page PDF Exporter
+    async function downloadCombinedPDF() {
+      var sheets = document.querySelectorAll('.a4-canvas-sheet');
+      if (sheets.length === 0) return;
+      showToast('Compiling Multi-Page PDF...');
+
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF('p', 'mm', 'a4');
+
+      for (var i = 0; i < sheets.length; i++) {
+        await new Promise(function(resolve) {
+          (function(index) {
+            renderSheetToCanvas(sheets[index], function(canvas) {
+              var imgData = canvas.toDataURL('image/jpeg', 0.92);
+              if (index > 0) pdf.addPage('a4', 'p');
+              pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+              resolve();
+            });
+          })(i);
+        });
+      }
+
+      var pdfBase64 = pdf.output('datauristring').replace(/^data:application\/pdf;filename=generated.pdf;base64,/, '');
+      var pdfFileName = 'A4_Handwritten_Assignment_' + Date.now() + '.pdf';
+
+      var saved = await saveBase64File(pdfBase64, pdfFileName);
+      if (saved) {
+        showToast('✅ Saved PDF directly to Storage/Documents!');
+      } else {
+        pdf.save(pdfFileName);
+        showToast('PDF downloaded successfully!');
+      }
+    }
   </script>
 </body>
 </html>
