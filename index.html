@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A4 Notes Maker</title>
   
-  <!-- Robust Handwriting Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Marck+Script&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Caveat:wght@600&family=Courier+Prime&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -61,7 +60,6 @@
       margin-top: 12px; cursor: pointer;
     }
 
-    /* Outer Wrapper for responsive fit */
     .pages-wrap { display: flex; flex-direction: column; gap: 18px; margin-top: 12px; width: 100%; overflow: hidden; }
     .a4-box { background: #334155; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; width: 100%; }
     .page-title { font-size: 0.75rem; font-weight: 600; color: #f8fafc; margin-bottom: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
@@ -69,29 +67,29 @@
 
     .sheet-viewport { width: 100%; display: flex; justify-content: center; overflow: hidden; }
 
-    /* Authentic Notebook Paper Layout */
+    /* Authentic Paper with Texture & Margins */
     .a4-canvas-sheet {
       width: 100%; max-width: 380px; min-height: 537px;
-      background: #faf8ef; position: relative; border-radius: 2px;
+      background: #faf7ee; position: relative; border-radius: 2px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.25);
       padding: 55px 18px 25px 44px; overflow: hidden;
     }
 
-    /* Double Header Line (Red/Rose) */
+    /* Red Top Double Margin */
     .a4-canvas-sheet.ruled::before {
       content: ''; position: absolute; top: 48px; left: 0; right: 0;
       height: 1px; background: rgba(244, 63, 94, 0.75); z-index: 2;
       box-shadow: 0 3px 0 rgba(244, 63, 94, 0.75);
     }
 
-    /* Left Double Margin Line */
+    /* Left Red Double Margin */
     .a4-canvas-sheet.ruled::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 34px;
       width: 1px; background: rgba(244, 63, 94, 0.75); z-index: 2;
       box-shadow: 3px 0 0 rgba(244, 63, 94, 0.75);
     }
 
-    /* Authentic Blue Ruled Lines */
+    /* Notebook Ruling */
     .a4-canvas-sheet.ruled {
       background-image: repeating-linear-gradient(
         transparent,
@@ -102,23 +100,18 @@
       background-position: 0 54px;
     }
 
-    /* Organic Handwriting Line Container */
     .handwriting-text {
       position: relative; z-index: 3;
       white-space: normal; word-break: break-word;
-      line-height: 24px;
-      font-size: 15px;
+      line-height: 24px; font-size: 15px;
     }
 
-    /* Micro-Jitter for authentic human hand simulation */
     .hw-word {
       display: inline-block;
       margin-right: 4px;
       transform-origin: center bottom;
-      transition: transform 0.1s;
     }
 
-    /* Pastel Highlighting Styles */
     .hl-box {
       border: 1.5px dashed #f43f5e;
       padding: 1px 8px;
@@ -136,20 +129,11 @@
       display: inline-block;
       font-weight: 700;
     }
-    .hl-blue {
-      background: rgba(186, 230, 253, 0.85);
-      padding: 1px 6px;
-      border-radius: 4px;
-      color: #0369a1 !important;
-      display: inline-block;
-      font-weight: 700;
-    }
 
     .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
     .btn-exp-all-jpg { background: #0284c7; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
     .btn-exp-pdf { background: #059669; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; }
 
-    /* Monetization */
     .ad-box { background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; text-align: center; }
     .btn-ad { background: #d97706; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; margin-top: 6px; cursor: pointer; }
 
@@ -178,12 +162,12 @@
 
   <main class="container">
     <section class="card">
-      <label>Paste Assignment / Question & Answer:</label>
-      <textarea id="textInput" placeholder="Q. Draw a neat labelled diagram of Nephron...&#10;Answer: Nephron is the structural unit...&#10;Structure of Nephron:"></textarea>
+      <label>Paste Assignment / Notes Text:</label>
+      <textarea id="textInput" placeholder="Q. Explain topic...&#10;Answer: Enter answer text here...&#10;Key Points:"></textarea>
 
       <div class="grid">
         <div>
-          <label>Target Page Count (Auto Fit):</label>
+          <label>Target Pages (Auto-Fit):</label>
           <select id="targetPagesSelect">
             <option value="auto">Auto Calculate</option>
             <option value="1">Fit in Exact 1 Page</option>
@@ -193,11 +177,20 @@
           </select>
         </div>
         <div>
-          <label>Handwriting Font:</label>
+          <label>Font & Writing Style:</label>
           <select id="fontFamily">
-            <option value="'Kalam', cursive">Kalam (Natural Human Pen)</option>
-            <option value="'Patrick Hand', cursive">Patrick Hand (Neat School)</option>
-            <option value="'Caveat', cursive">Caveat (Stylist Cursive)</option>
+            <optgroup label="✨ Cursive Handwriting">
+              <option value="'Dancing Script', cursive" selected>Dancing Script (Elegant Cursive)</option>
+              <option value="'Caveat', cursive">Caveat (Stylist Flowing)</option>
+            </optgroup>
+            <optgroup label="✍️ Natural Pen Handwriting">
+              <option value="'Kalam', cursive">Kalam (Realistic Ball Pen)</option>
+              <option value="'Patrick Hand', cursive">Patrick Hand (School Topper)</option>
+            </optgroup>
+            <optgroup label="💻 Computer Typed">
+              <option value="'Courier Prime', monospace">Typewriter Monospace</option>
+              <option value="'Roboto', sans-serif">Computer Printed (Sans)</option>
+            </optgroup>
           </select>
         </div>
       </div>
@@ -207,15 +200,15 @@
           <label>Paper Style:</label>
           <select id="paperType">
             <option value="ruled" selected>Ruled Assignment (Double Margins)</option>
-            <option value="plain">Plain White Sheet</option>
+            <option value="plain">Plain White A4</option>
           </select>
         </div>
         <div>
-          <label>Pen Ink Color:</label>
+          <label>Pen Ink Tone:</label>
           <select id="fontColor">
-            <option value="#1d4ed8">Royal Blue Gel Pen</option>
-            <option value="#0f172a">Black Ball Pen</option>
-            <option value="#0369a1">Cyan Blue Ink</option>
+            <option value="#1e3a8a">Royal Blue Ballpoint</option>
+            <option value="#18181b">Realistic Black Gel Pen</option>
+            <option value="#0369a1">Deep Cyan Pen</option>
           </select>
         </div>
       </div>
@@ -295,11 +288,7 @@
     function syncUI() {
       document.getElementById('balBadge').innerText = 'Balance: ' + balance + ' Pages';
       var btn = document.getElementById('navAuthBtn');
-      if (loggedInUser) {
-        btn.innerText = loggedInUser;
-      } else {
-        btn.innerText = 'Login';
-      }
+      btn.innerText = loggedInUser ? loggedInUser : 'Login';
     }
 
     function toggleModal() {
@@ -363,7 +352,6 @@
       return chunks;
     }
 
-    // Converts text into organic handwriting with micro-rotations & pastel styles
     function formatTextToRealisticNotes(plainText) {
       var lines = plainText.split('\n');
       var html = '';
@@ -382,13 +370,13 @@
         } else if (l.endsWith(':') && l.length < 40) {
           html += '<div style="margin: 4px 0;"><span class="hl-green">' + l + '</span></div>';
         } else {
-          // Wrap words in jitter spans for natural hand human effect
           var words = l.split(' ');
           var lineHTML = '<div style="margin-bottom: 2px;">';
           for (var w = 0; w < words.length; w++) {
             var rot = ((Math.random() * 1.6) - 0.8).toFixed(2);
             var yShift = ((Math.random() * 1.2) - 0.6).toFixed(2);
-            lineHTML += '<span class="hw-word" style="transform: rotate(' + rot + 'deg) translateY(' + yShift + 'px);">' + words[w] + '</span>';
+            var opacity = (0.88 + Math.random() * 0.12).toFixed(2);
+            lineHTML += '<span class="hw-word" style="transform: rotate(' + rot + 'deg) translateY(' + yShift + 'px); opacity: ' + opacity + ';">' + words[w] + '</span>';
           }
           lineHTML += '</div>';
           html += lineHTML;
@@ -457,14 +445,15 @@
       showToast('Handwritten Pages created!');
     }
 
-    // High-Resolution 2D Canvas Renderer with Natural Jitter & Notebook Margins
+    // Realistic Human Pen-Pressure Canvas Engine
     function renderSheetToCanvas(sheetEl, callback) {
       var canvas = document.createElement('canvas');
-      canvas.width = 794;  // Standard A4 width @ 96 DPI
-      canvas.height = 1123; // Standard A4 height @ 96 DPI
+      canvas.width = 794;
+      canvas.height = 1123;
       var ctx = canvas.getContext('2d');
 
-      ctx.fillStyle = '#faf8ef';
+      // Natural Paper Base (Subtle grain & warm tone)
+      ctx.fillStyle = '#faf6ed';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (sheetEl.classList.contains('ruled')) {
@@ -483,11 +472,11 @@
         ctx.moveTo(74, 0);
         ctx.lineTo(74, canvas.height);
         ctx.moveTo(80, 0);
-                ctx.lineTo(80, canvas.height);
+        ctx.lineTo(80, canvas.height);
         ctx.stroke();
 
-        // Cyan / Blue Notebook Ruling
-        ctx.strokeStyle = 'rgba(125, 211, 252, 0.6)';
+        // Realistic Notebook Blue Lines
+        ctx.strokeStyle = 'rgba(125, 211, 252, 0.58)';
         ctx.lineWidth = 1.2;
         for (var y = 146; y < canvas.height - 40; y += 46) {
           ctx.beginPath();
@@ -499,12 +488,22 @@
 
       var textNode = sheetEl.querySelector('.handwriting-text');
       var rawLines = textNode.innerText.split('\n');
-      var fontName = textNode.style.fontFamily.replace(/['",]/g, '').trim().split(' ')[0] || 'Kalam';
+      var rawFont = textNode.style.fontFamily || 'Dancing Script';
+      var fontName = 'Dancing Script';
+      var isCursive = false;
+
+      if (rawFont.indexOf('Dancing Script') !== -1) { fontName = 'Dancing Script'; isCursive = true; }
+      else if (rawFont.indexOf('Kalam') !== -1) { fontName = 'Kalam'; isCursive = true; }
+      else if (rawFont.indexOf('Patrick Hand') !== -1) { fontName = 'Patrick Hand'; isCursive = true; }
+      else if (rawFont.indexOf('Caveat') !== -1) { fontName = 'Caveat'; isCursive = true; }
+      else if (rawFont.indexOf('Courier Prime') !== -1) { fontName = 'Courier Prime'; isCursive = false; }
+      else if (rawFont.indexOf('Roboto') !== -1) { fontName = 'Roboto'; isCursive = false; }
 
       var startX = sheetEl.classList.contains('ruled') ? 96 : 50;
       var startY = 140;
       var lineHeight = 46;
       var maxLineWidth = canvas.width - startX - 45;
+      var baseColor = textNode.style.color || '#1e3a8a';
 
       for (var i = 0; i < rawLines.length; i++) {
         var lineText = rawLines[i].trim();
@@ -513,9 +512,8 @@
           continue;
         }
 
-        ctx.font = '28px ' + fontName + ', cursive, sans-serif';
+        ctx.font = (isCursive ? '29px ' : '24px ') + fontName + ', cursive, sans-serif';
 
-        // Custom Highlight Boxes for Q/A and Headings
         if (lineText.startsWith('Q.') || lineText.startsWith('Question:')) {
           ctx.strokeStyle = '#f43f5e';
           ctx.lineWidth = 1.5;
@@ -532,23 +530,41 @@
           ctx.fillRect(startX - 2, startY - 24, m.width + 10, 30);
           ctx.fillStyle = '#14532d';
         } else {
-          ctx.fillStyle = textNode.style.color || '#1d4ed8';
+          ctx.fillStyle = baseColor;
         }
 
         var words = lineText.split(' ');
-        var currentLine = '';
+        var currentX = startX;
+
         for (var n = 0; n < words.length; n++) {
-          var testLine = currentLine + words[n] + ' ';
-          var metrics = ctx.measureText(testLine);
-          if (metrics.width > maxLineWidth && n > 0) {
-            ctx.fillText(currentLine, startX, startY);
-            currentLine = words[n] + ' ';
+          var word = words[n] + ' ';
+          var metrics = ctx.measureText(word);
+
+          if (currentX + metrics.width > canvas.width - 40 && n > 0) {
             startY += lineHeight;
-          } else {
-            currentLine = testLine;
+            currentX = startX;
           }
+
+          // Natural Pen-Pressure & Jitter Layer
+          ctx.save();
+          if (isCursive) {
+            var jitterAngle = (Math.random() * 0.02 - 0.01);
+            var jitterY = (Math.random() * 1.4 - 0.7);
+            ctx.translate(currentX, startY + jitterY);
+            ctx.rotate(jitterAngle);
+
+            var pressure = 0.90 + Math.random() * 0.18;
+            ctx.globalAlpha = Math.min(1.0, pressure);
+            ctx.shadowColor = baseColor;
+            ctx.shadowBlur = (Math.random() > 0.4) ? 0.35 : 0;
+            ctx.fillText(word, 0, 0);
+          } else {
+            ctx.fillText(word, currentX, startY);
+          }
+          ctx.restore();
+
+          currentX += metrics.width;
         }
-        ctx.fillText(currentLine, startX, startY);
         startY += lineHeight;
       }
 
@@ -579,7 +595,7 @@
       showToast('Saving Page ' + (pageIndex + 1) + '...');
 
       renderSheetToCanvas(sheet, async function(canvas) {
-        var base64Data = canvas.toDataURL('image/jpeg', 0.95);
+        var base64Data = canvas.toDataURL('image/jpeg', 0.96);
         var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
         var fileName = 'A4_Notes_Page_' + (pageIndex + 1) + '_' + Date.now() + '.jpg';
 
@@ -607,7 +623,7 @@
         await new Promise(function(resolve) {
           (function(index) {
             renderSheetToCanvas(sheets[index], async function(canvas) {
-              var base64Data = canvas.toDataURL('image/jpeg', 0.95);
+              var base64Data = canvas.toDataURL('image/jpeg', 0.96);
               var cleanBase64 = base64Data.replace(/^data:image\/jpeg;base64,/, '');
               var fileName = 'A4_Notes_Page_' + (index + 1) + '_' + Date.now() + '.jpg';
 
@@ -640,7 +656,7 @@
         await new Promise(function(resolve) {
           (function(index) {
             renderSheetToCanvas(sheets[index], function(canvas) {
-              var imgData = canvas.toDataURL('image/jpeg', 0.92);
+              var imgData = canvas.toDataURL('image/jpeg', 0.95);
               if (index > 0) pdf.addPage('a4', 'p');
               pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
               resolve();
